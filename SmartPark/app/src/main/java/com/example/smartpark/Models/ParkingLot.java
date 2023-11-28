@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ParkingLot
 {
-    private long ID;
+    private String ID;
     public String name;
     public float latitude;
     public float longitude;
