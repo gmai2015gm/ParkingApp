@@ -1,22 +1,44 @@
 package com.example.smartpark;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class UserAuthActivity extends AppCompatActivity {
     Button btnSignIn, btnRegister, btnAuth, btnSwitch;
     EditText etUsername, etEmail, etPass, etPassConf;
-    boolean firstTimeUser;
+    boolean firstTimeUser, authingFlag;
+    RequestQueue queue;
+    String url;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_auth_activity);
+
+        //Set up Volley
+        queue = Volley.newRequestQueue(this);
+        url = "https://smartpark-api.onrender.com/";
+
+        //Nothing is authorizing at start
+        authingFlag = false;
 
         //Assign views
         btnSignIn = findViewById(R.id.btnSignIn);
@@ -43,8 +65,13 @@ public class UserAuthActivity extends AppCompatActivity {
         btnAuth.setText("Sign In");
         btnAuth.setVisibility(View.VISIBLE);
 
-        //Hide the original sign in button
+        //Hide unused views
+        etUsername.setVisibility(View.INVISIBLE);
+        etPassConf.setVisibility(View.INVISIBLE);
+
+        //Hide the starting buttons
         btnSignIn.setVisibility(View.INVISIBLE);
+        btnRegister.setVisibility(View.INVISIBLE);
     }
 
     //Set up the registration screen
@@ -63,7 +90,8 @@ public class UserAuthActivity extends AppCompatActivity {
         btnAuth.setText("Register");
         btnAuth.setVisibility(View.VISIBLE);
 
-        //Hide the original sign in button
+        //Hide the starting buttons
+        btnSignIn.setVisibility(View.INVISIBLE);
         btnRegister.setVisibility(View.INVISIBLE);
     }
 
@@ -79,7 +107,98 @@ public class UserAuthActivity extends AppCompatActivity {
 
     //Sign in/register the user then send them to the main screen
     public void authenticateUser(View v){
-        //While everything above was cosmetic, this does the heavy lifting.
+        if (!authingFlag){ //Prevent spam
+            if (firstTimeUser){
+                register();
+            } else {
+                signIn();
+            }
+        }
+    }
 
+    private void signIn() {
+        authingFlag = true;
+
+        //Create the registration
+        JSONObject signIn = new JSONObject();
+        try {
+            signIn.put("loginName", etEmail.getText());
+            signIn.put("password", hashPass()); //This helper function returns the hashed password
+        } catch (JSONException e) {
+            Log.e("Sign In", "Failed to create the sign in JSON");
+            authingFlag = false;
+            return;
+        }
+
+        //Send the registration request to the server and get response
+        JsonObjectRequest signInReq = new JsonObjectRequest(Request.Method.POST, url, signIn,
+                response -> {
+                    //For now, do nothing
+                    Log.i("Sign In", "Successful sign in");
+                    authingFlag = false;
+                }
+                , error -> {
+                    Log.e("Sign In", "Could not sign in user.");
+                    Toast.makeText(this, "Could not sign in user.", Toast.LENGTH_SHORT).show();
+                    authingFlag = false;
+                }
+        );
+        queue.add(signInReq);
+    }
+
+    private void register() {
+        authingFlag = true;
+
+        //Verify the passwords are the same
+        if (!etPass.getText().toString().equals(etPassConf.getText().toString())){
+            //If the passwords aren't the same, halt the registration and inform the users
+            Toast.makeText(this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //Create the registration
+        JSONObject registration = new JSONObject();
+        try {
+            registration.put("userName", etUsername.getText());
+            registration.put("email",etEmail.getText());
+            registration.put("password", hashPass()); //This helper function returns the hashed password
+        } catch (JSONException e) {
+            Log.e("Register", "Failed to create the registration JSON");
+            authingFlag = false;
+            return;
+        }
+
+        //Send the registration request to the server and get response
+        JsonObjectRequest regiReq = new JsonObjectRequest(Request.Method.POST, url, registration,
+                response -> {
+                    //For now, do nothing
+                    Log.i("Register", "Successful registration");
+                    authingFlag = false;
+                }
+                , error -> {
+                    Log.e("Register", "Could not register user.");
+                    Toast.makeText(this, "Could not register user.", Toast.LENGTH_SHORT).show();
+                    authingFlag = false;
+                }
+        );
+        queue.add(regiReq);
+    }
+
+    //Hash the user's password and return it
+    private String hashPass(){
+        //Get the password
+        String pass = etPass.getText().toString();
+
+        //Hash the password
+        try {
+            MessageDigest hasher = MessageDigest.getInstance("MD5"); //Establish the hashing algorithm
+            hasher.update(pass.getBytes()); //Hash the password
+            byte[] digest = hasher.digest(); //Get the hash digest
+            String passHash = new String(digest); //Store the hashed password
+            return passHash;
+        } catch (NoSuchAlgorithmException e) {
+            Log.e("Pass Hash", "Failed to hash the password.");
+            return null;
+        }
     }
 }
