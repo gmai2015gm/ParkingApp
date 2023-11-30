@@ -35,7 +35,7 @@ public class UserAuthActivity extends AppCompatActivity {
 
         //Set up Volley
         queue = Volley.newRequestQueue(this);
-        url = "https://smartpark-api.onrender.com/";
+        url = "https://smartpark-api.onrender.com";
 
         //Nothing is authorizing at start
         authingFlag = false;
@@ -119,7 +119,7 @@ public class UserAuthActivity extends AppCompatActivity {
     private void signIn() {
         authingFlag = true;
 
-        //Create the registration
+        //Create the sign in
         JSONObject signIn = new JSONObject();
         try {
             signIn.put("loginName", etEmail.getText());
@@ -130,8 +130,8 @@ public class UserAuthActivity extends AppCompatActivity {
             return;
         }
 
-        //Send the registration request to the server and get response
-        JsonObjectRequest signInReq = new JsonObjectRequest(Request.Method.POST, url, signIn,
+        //Send the sign in request to the server and get response
+        JsonObjectRequest signInReq = new JsonObjectRequest(Request.Method.POST, url + "/login", signIn,
                 response -> {
                     //For now, do nothing
                     Log.i("Sign In", "Successful sign in");
@@ -169,14 +169,23 @@ public class UserAuthActivity extends AppCompatActivity {
         }
 
         //Send the registration request to the server and get response
-        JsonObjectRequest regiReq = new JsonObjectRequest(Request.Method.POST, url, registration,
+        JsonObjectRequest regiReq = new JsonObjectRequest(Request.Method.POST, url + "/register", registration,
                 response -> {
                     //For now, do nothing
-                    Log.i("Register", "Successful registration");
-                    authingFlag = false;
+                    try {
+                        int successFlag = response.getInt("success");
+                        if (successFlag == 1){
+                            Log.i("Register", "Successful registration");
+                        } else {
+                            Log.e("Register", "Could not register the user. (No error)");
+                        }
+                        authingFlag = false;
+                    } catch (JSONException e) {
+                        Log.e("Register", "Could not read server response.\n" + e);
+                    }
                 }
                 , error -> {
-                    Log.e("Register", "Could not register user.");
+                    Log.e("Register", "Could not register user.\n" + error);
                     Toast.makeText(this, "Could not register user.", Toast.LENGTH_SHORT).show();
                     authingFlag = false;
                 }
