@@ -11,5 +11,6 @@ public class ParkingLot
     public double avgCleanliness;
     public double avgSafety;
     public double avgAvailability;
+    public double distance;
     public ArrayList<Rating> ratings;
 }
