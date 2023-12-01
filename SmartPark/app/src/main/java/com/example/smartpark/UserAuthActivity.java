@@ -133,8 +133,17 @@ public class UserAuthActivity extends AppCompatActivity {
         //Send the sign in request to the server and get response
         JsonObjectRequest signInReq = new JsonObjectRequest(Request.Method.POST, url + "/login", signIn,
                 response -> {
-                    //For now, do nothing
-                    Log.i("Sign In", "Successful sign in");
+                    try {
+                        int successFlag = response.getInt("success");
+                        if (successFlag == 1){
+                            //For now, do nothing
+                            Log.i("Sign In", "Successful sign in");
+                        } else {
+                            Log.e("Sign In", "Could not sign in user. (No error)");
+                        }
+                    } catch (JSONException e) {
+                        Log.e("Sign In", "Could not read the server response.\n" + e);
+                    }
                     authingFlag = false;
                 }
                 , error -> {
@@ -171,18 +180,18 @@ public class UserAuthActivity extends AppCompatActivity {
         //Send the registration request to the server and get response
         JsonObjectRequest regiReq = new JsonObjectRequest(Request.Method.POST, url + "/register", registration,
                 response -> {
-                    //For now, do nothing
                     try {
                         int successFlag = response.getInt("success");
                         if (successFlag == 1){
+                            //For now, do nothing
                             Log.i("Register", "Successful registration");
                         } else {
                             Log.e("Register", "Could not register the user. (No error)");
                         }
-                        authingFlag = false;
                     } catch (JSONException e) {
                         Log.e("Register", "Could not read server response.\n" + e);
                     }
+                    authingFlag = false;
                 }
                 , error -> {
                     Log.e("Register", "Could not register user.\n" + error);
