@@ -53,7 +53,6 @@ public class ParkingLotHelper
     }
     private ArrayList<ParkingLot> parseLots(JSONObject json) throws JSONException
     {
-        //
         ArrayList<ParkingLot> result = new ArrayList<>();
 
         //Grab our array of lots
@@ -63,8 +62,6 @@ public class ParkingLotHelper
             ParkingLot currLot = parseLot(lots.getJSONObject(i));
             result.add(currLot);
         }
-
-        Log.d(TAG + "Lots", "" + result);
 
         return result;
     }
