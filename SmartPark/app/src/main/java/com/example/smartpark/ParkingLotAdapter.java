@@ -1,6 +1,8 @@
 package com.example.smartpark;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +42,12 @@ public class ParkingLotAdapter extends RecyclerView.Adapter<ParkingLotViewHolder
         holder.tvLotName.setText("Lot Name: "+p.name);
         holder.tvRating.setText("Rating: "+p.avgAvailability);
         holder.tvDistance.setText("Distance: "+p.distance);
+
+        holder.itemView.setOnClickListener(v -> {
+//            Intent i = new Intent(context,);
+//            i.putExtra("id", a.id);
+//            ((Activity) context).startActivityForResult(i, 1);
+        });
     }
 
     @Override
@@ -47,5 +55,9 @@ public class ParkingLotAdapter extends RecyclerView.Adapter<ParkingLotViewHolder
     {
         return parkingLots.size();
     }
-
+    public void updateData(ArrayList<ParkingLot> newParkingLots) {
+        parkingLots.clear(); // Clear existing data
+        parkingLots.addAll(newParkingLots); // Add new data
+        notifyDataSetChanged(); // Notify the adapter to refresh the view
+    }
 }
