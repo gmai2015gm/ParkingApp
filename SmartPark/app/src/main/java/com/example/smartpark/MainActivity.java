@@ -13,7 +13,7 @@ import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnSettings, btnFindParking;
+    Button btnSettings, btnFindParking, btnViewReports;
     ImageButton imgbtnAppInfo;
     public static final String TAG = "SmartPark";
     public static final int LOCATION_REQUEST_CODE = 115;
@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btnSettings = findViewById(R.id.btnSettings);
         btnFindParking = findViewById(R.id.btnFindParking);
+        btnViewReports = findViewById(R.id.btnViewReports);
         imgbtnAppInfo = findViewById(R.id.imgbtnAppInfo);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -32,6 +33,13 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Location access permitted...");
         }
 
+
+        btnViewReports.setOnClickListener(v -> {
+                                //put report activity here
+//            Intent i = new Intent(this, .class);
+//            startActivity(i);
+//            finish();
+        });
 
         btnSettings.setOnClickListener(v -> {
 //            Intent i = new Intent(this, Settings.class);
