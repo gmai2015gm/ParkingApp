@@ -12,24 +12,30 @@ import com.example.smartpark.Models.ParkingLot;
 
 import java.util.ArrayList;
 
-public class ParkingLotAdapter extends RecyclerView.Adapter<ParkingLotViewHolder>{
+public class ParkingLotAdapter extends RecyclerView.Adapter<ParkingLotViewHolder>
+{
+
     ArrayList<ParkingLot> parkingLots;
     Context context;
 
 
-    public ParkingLotAdapter(Context context, ArrayList<ParkingLot> parkingLots){
+    public ParkingLotAdapter(Context context, ArrayList<ParkingLot> parkingLots)
+    {
         this.parkingLots = parkingLots;
         this.context = context;
     }
+
     @NonNull
     @Override
-    public ParkingLotViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ParkingLotViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+    {
         View v = LayoutInflater.from(context).inflate(R.layout.layout_parking_lot, parent, false);
         return new ParkingLotViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ParkingLotViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ParkingLotViewHolder holder, int position)
+    {
         ParkingLot p = parkingLots.get(position);
         holder.tvLotName.setText("Lot Name: "+p.name);
         holder.tvRating.setText("Rating: "+p.avgAvailability);
@@ -37,7 +43,9 @@ public class ParkingLotAdapter extends RecyclerView.Adapter<ParkingLotViewHolder
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCount()
+    {
         return parkingLots.size();
     }
+
 }
