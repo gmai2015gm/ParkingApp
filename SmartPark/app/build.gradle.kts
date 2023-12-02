@@ -3,7 +3,6 @@ plugins {
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
-
 android {
     namespace = "com.example.smartpark"
     compileSdk = 34
