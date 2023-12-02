@@ -4,17 +4,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
 
     Button btnSettings, btnFindParking, btnViewReports;
-    ImageButton imgbtnAppInfo;
+    ImageView ivAppInfo;
     public static final String TAG = "SmartPark";
     public static final int LOCATION_REQUEST_CODE = 115;
 
@@ -25,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         btnSettings = findViewById(R.id.btnSettings);
         btnFindParking = findViewById(R.id.btnFindParking);
         btnViewReports = findViewById(R.id.btnViewReports);
-        imgbtnAppInfo = findViewById(R.id.imgbtnAppInfo);
+        ivAppInfo = findViewById(R.id.ivAppInfo);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
@@ -53,7 +55,14 @@ public class MainActivity extends AppCompatActivity {
 //            finish();
         });
 
-        imgbtnAppInfo.setOnClickListener(v -> {
+        ivAppInfo.setOnClickListener(v -> {
+            Dialog dialog = new Dialog(this, R.style.DialogStyle);
+            dialog.setContentView(R.layout.activity_app_info);
+            ImageView ivCloseAppInfo = dialog.findViewById(R.id.ivCloseAppInfo);
+            ivCloseAppInfo.setOnClickListener(v2 -> {
+                dialog.dismiss();
+            });
+            dialog.show();
 
         });
     }

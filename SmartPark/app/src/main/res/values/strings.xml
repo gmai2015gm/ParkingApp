@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SmartPark</string>
+
+    <string name="app_info">Welcome to SmartPark! </string>
 </resources>
