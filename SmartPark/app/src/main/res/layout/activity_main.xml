@@ -11,7 +11,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Smart Park"
+        android:text="SmartPark"
         android:textColor="@color/white"
         android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +38,7 @@
         app:layout_constraintEnd_toEndOf="@+id/btnFindParking"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/btnFindParking"
-        app:layout_constraintTop_toBottomOf="@+id/btnFindParking" />
+        app:layout_constraintTop_toBottomOf="@+id/btnViewReports" />
 
     <Button
         android:id="@+id/btnViewReports"
@@ -48,7 +48,7 @@
         android:text="View Parking Lot Reports"
         app:layout_constraintEnd_toEndOf="@+id/btnSettings"
         app:layout_constraintStart_toStartOf="@+id/btnSettings"
-        app:layout_constraintTop_toBottomOf="@+id/btnSettings" />
+        app:layout_constraintTop_toBottomOf="@+id/btnFindParking" />
 
     <ImageView
         android:id="@+id/ivAppInfo"

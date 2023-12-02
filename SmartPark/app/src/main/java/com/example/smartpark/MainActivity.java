@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         ivAppInfo.setOnClickListener(v -> {
             Dialog dialog = new Dialog(this, R.style.DialogStyle);
             dialog.setContentView(R.layout.activity_app_info);
+            dialog.getWindow().setBackgroundDrawableResource(R.drawable.bg_window);
             ImageView ivCloseAppInfo = dialog.findViewById(R.id.ivCloseAppInfo);
             ivCloseAppInfo.setOnClickListener(v2 -> {
                 dialog.dismiss();

@@ -8,7 +8,7 @@
     <style name="Theme.SmartPark" parent="Base.Theme.SmartPark" />
 
     <style name="DialogStyle" parent="Theme.AppCompat.Dialog">
-        <item name="android:windowMinWidthMajor">100%</item>
-        <item name="android:windowMinWidthMinor">100%</item>
+        <item name="android:windowMinWidthMajor">95%</item>
+        <item name="android:windowMinWidthMinor">95%</item>
     </style>
 </resources>
