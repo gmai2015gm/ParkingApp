@@ -28,6 +28,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -37,7 +38,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
-public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallback, ParkingLotHelper.ParkingLotFetchListener {
+public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallback{
     RecyclerView rvParkingLots;
     GoogleMap map;
     Switch toggleView;
@@ -53,6 +54,9 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        MapsInitializer.initialize(this);
+//        MapsInitializer.initialize(this, MapsInitializer.Renderer.LATEST, l->{});
+
         setContentView(R.layout.activity_parking_lot_info);
         rvParkingLots = findViewById(R.id.rvParkingLots);
         toggleView = findViewById(R.id.toggleView);
@@ -161,60 +165,44 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 
 
 
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setInterval(60000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setFastestInterval(5000);
-        LocationCallback locationCallback= new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-
-                if(locationResult==null)
-                    return;
-                for(Location location:locationResult.getLocations()){
-                    if(location!=null){
-//                        userLon = location.getLongitude();
-                    }
-                }
-            }
-        };
-
+//        LocationRequest locationRequest = LocationRequest.create();
+//        locationRequest.setInterval(60000);
+//        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+//        locationRequest.setFastestInterval(5000);
+//        LocationCallback locationCallback= new LocationCallback() {
+//            @Override
+//            public void onLocationResult(@NonNull LocationResult locationResult) {
+//                super.onLocationResult(locationResult);
 //
-        locationProviderClient.requestLocationUpdates(locationRequest,locationCallback,null);
-        Task<Location> task = locationProviderClient.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if(location!=null){
-                    lat =location.getLatitude();
-                    lon = location.getLongitude();
-                    LatLng latLng = new LatLng(lat, lon);
-                    map.addMarker(new MarkerOptions().position(latLng).title("Current Location"));
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
-                    int radius = sbMiles.getProgress() + 5;
-
-                    new ParkingLotHelper().fetchParkingLots(lat, lon, radius, map, adapter, ParkingLotInfo.this, getApplicationContext());
-                }
-            }
-        });
-
-//        locationProviderClient.getLastLocation()
-//                .addOnSuccessListener(this, location -> {
-//                    if (location != null) {
-//                        double userLat = location.getLatitude();
-//                        double userLng = location.getLongitude();
-//                        int radius = sbMiles.getProgress() + 5; // Adjust based on SeekBar value
+//                if(locationResult==null)
+//                    return;
+//                for(Location location:locationResult.getLocations()){
+//                    if(location!=null){
+////                        userLon = location.getLongitude();
+//                    }
+//                }
+//            }
+//        };
 //
+//        locationProviderClient.requestLocationUpdates(locationRequest,locationCallback,null);
+//
+
+        locationProviderClient.getLastLocation()
+                .addOnSuccessListener(this, location -> {
+                    if (location != null) {
+                        double userLat = location.getLatitude();
+                        double userLng = location.getLongitude();
+                        int radius = sbMiles.getProgress() + 5; // Adjust based on SeekBar value
+
 //
 //                        new ParkingLotHelper().fetchParkingLots(userLat, userLng, radius, map, adapter,this,getApplicationContext());
-//                    } else {
-//                        // Handle the case where location is null
-//                    }
-//                })
-//                .addOnFailureListener(this, e -> {
-//                    // Handle the failure in getting location
-//                });
+                    } else {
+                        // Handle the case where location is null
+                    }
+                })
+                .addOnFailureListener(this, e -> {
+                    // Handle the failure in getting location
+                });
     }
 
 
@@ -230,16 +218,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 
     }
 
-    @Override
-    public void onParkingLotsFetched(ArrayList<ParkingLot> parkingLots) {
-        adapter.updateData(parkingLots);
-        updateMapView(parkingLots);
-    }
 
-    @Override
-    public void onError(VolleyError error) {
-
-    }
     private void updateMapView(ArrayList<ParkingLot> parkingLots) {
         if (map != null) {
             for (ParkingLot lot : parkingLots) {
@@ -248,4 +227,6 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
             }
         }
     }
+
+
 }
