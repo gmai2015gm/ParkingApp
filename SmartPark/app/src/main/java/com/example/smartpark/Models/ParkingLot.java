@@ -27,7 +27,7 @@ public class ParkingLot
         this.avgAvailability = avgAvailability;
         this.ratings = ratings;
     }
-}
+
 
     @Override
     public String toString() {
@@ -38,9 +38,7 @@ public class ParkingLot
                 ", longitude=" + longitude +
                 ", avgCleanliness=" + avgCleanliness +
                 ", avgSafety=" + avgSafety +
-                ", rating=" + rating +
                 ", avgAvailability=" + avgAvailability +
-                ", distance=" + distance +
                 ", ratings=" + ratings +
                 '}';
     }

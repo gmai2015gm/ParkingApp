@@ -1,6 +1,5 @@
 package com.example.smartpark;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -8,38 +7,34 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.example.smartpark.APIHelpers.ParkingLotHelper;
 import com.example.smartpark.Models.ParkingLot;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
 public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallback{
-    RecyclerView rvParkingLots;
+    ListView lstParkingLots;
     GoogleMap map;
     Switch toggleView;
     SeekBar sbMiles;
@@ -51,6 +46,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +54,8 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 //        MapsInitializer.initialize(this, MapsInitializer.Renderer.LATEST, l->{});
 
         setContentView(R.layout.activity_parking_lot_info);
-        rvParkingLots = findViewById(R.id.rvParkingLots);
+
+        lstParkingLots = findViewById(R.id.lstParkingLots);
         toggleView = findViewById(R.id.toggleView);
         sbMiles = findViewById(R.id.sbMiles);
         parkingLots = new ArrayList<>();
@@ -66,9 +63,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
         tvMiles = findViewById(R.id.tvMiles);
         btnSearch = findViewById(R.id.btnSearch);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
-        rvParkingLots.setLayoutManager(linearLayoutManager);
-        rvParkingLots.setAdapter(adapter);
+        lstParkingLots.setAdapter(adapter);
         tvMiles.setText("< 5 miles");
 
         // Get the SupportMapFragment
@@ -79,18 +74,18 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 //        rvParkingLots.setVisibility(View.GONE); // Hide the RecyclerView initially
         mapFragment.getView().setVisibility(View.GONE);
         toggleView.setText("List View"); // Set initial text for the switch
-        rvParkingLots.setVisibility(View.VISIBLE);
+        lstParkingLots.setVisibility(View.VISIBLE);
         // Set up the toggle switch listener
         toggleView.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 // When the switch is on, show the map and hide the list
                 mapFragment.getView().setVisibility(View.VISIBLE);
-                rvParkingLots.setVisibility(View.GONE);
+                lstParkingLots.setVisibility(View.GONE);
                 toggleView.setText("Map View");
             } else {
                 // When the switch is off, show the list and hide the map
                 mapFragment.getView().setVisibility(View.GONE);
-                rvParkingLots.setVisibility(View.VISIBLE);
+                lstParkingLots.setVisibility(View.VISIBLE);
                 toggleView.setText("List View");
             }
         });
@@ -165,6 +160,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 
 
 
+
 //        LocationRequest locationRequest = LocationRequest.create();
 //        locationRequest.setInterval(60000);
 //        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -194,8 +190,22 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
                         double userLng = location.getLongitude();
                         int radius = sbMiles.getProgress() + 5; // Adjust based on SeekBar value
 
-//
-//                        new ParkingLotHelper().fetchParkingLots(userLat, userLng, radius, map, adapter,this,getApplicationContext());
+                        // Create an instance of ParkingLotHelper
+                        RequestQueue queue = Volley.newRequestQueue(this);
+                        ParkingLotHelper parkingLotHelper = new ParkingLotHelper(this, queue);
+
+                        // Call getAllLots
+                        parkingLotHelper.getAllLots(new ParkingLotHelper.ArrayCallbackFunction() {
+                            @Override
+                            public void onSuccess(ArrayList<ParkingLot> result) {
+                                // Handle the result here
+                                updateMapView(result);
+                                updateListView(result);
+                                System.out.println(result);
+                                // Update RecyclerView adapter and/or Google Map markers
+                            }
+                        });
+
                     } else {
                         // Handle the case where location is null
                     }
@@ -220,12 +230,31 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 
 
     private void updateMapView(ArrayList<ParkingLot> parkingLots) {
-        if (map != null) {
-            for (ParkingLot lot : parkingLots) {
-                LatLng position = new LatLng(lot.latitude, lot.longitude);
-                map.addMarker(new MarkerOptions().position(position).title(lot.name));
+//        if (map != null) {
+//            for (ParkingLot lot : parkingLots) {
+//                LatLng position = new LatLng(lot.latitude, lot.longitude);
+//                map.addMarker(new MarkerOptions().position(position).title(lot.name));
+//            }
+//        }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (map != null) {
+                    map.clear(); // Clear existing markers
+                    for (ParkingLot lot : parkingLots) {
+                        LatLng position = new LatLng(lot.latitude, lot.longitude);
+                        map.addMarker(new MarkerOptions().position(position).title(lot.name));
+                    }
+                }
             }
-        }
+        });
+    }
+
+    public void updateListView(ArrayList<ParkingLot> newParkingLots) {
+        parkingLots.clear();
+        parkingLots.addAll(newParkingLots);
+        adapter.notifyDataSetChanged();
     }
 
 
