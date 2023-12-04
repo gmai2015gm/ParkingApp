@@ -38,10 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         btnViewReports.setOnClickListener(v -> {
-                                //put report activity here
-//            Intent i = new Intent(this, .class);
-//            startActivity(i);
-//            finish();
+            Intent i = new Intent(this, ReportActivity.class);
+            startActivity(i);
+            finish();
         });
 
         btnSettings.setOnClickListener(v -> {
@@ -61,9 +60,11 @@ public class MainActivity extends AppCompatActivity {
             dialog.setContentView(R.layout.activity_app_info);
             dialog.getWindow().setBackgroundDrawableResource(R.drawable.bg_window);
             ImageView ivCloseAppInfo = dialog.findViewById(R.id.ivCloseAppInfo);
+
             ivCloseAppInfo.setOnClickListener(v2 -> {
                 dialog.dismiss();
             });
+
             dialog.show();
 
         });
