@@ -3,9 +3,9 @@ package com.example.smartpark.Models;
 
 import java.util.ArrayList;
 
-public class ParkingLot {
-
-    public String ID;
+public class ParkingLot
+{
+    private String ID;
     public String name;
     public float latitude;
     public float longitude;
