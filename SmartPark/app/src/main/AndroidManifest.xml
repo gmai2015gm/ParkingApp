@@ -33,9 +33,6 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ParkingLotInfo"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,8 +41,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ParkingLotInfo"
+            android:exported="false" />
+        <activity
             android:name=".Settings"
-            android:exported="true">
+            android:exported="false">
         </activity>
     </application>
 
