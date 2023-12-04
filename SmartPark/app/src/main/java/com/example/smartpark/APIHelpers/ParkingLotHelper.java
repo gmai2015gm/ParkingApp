@@ -24,6 +24,10 @@ import java.util.ArrayList;
 public class ParkingLotHelper
 {
 
+    public final String TAG = "ParkingLotHelper";
+    Context context;
+    RequestQueue queue;
+
     public ParkingLotHelper(Context context, RequestQueue queue)
     {
         this.context = context;
