@@ -1,16 +1,11 @@
 package com.example.smartpark;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartpark.Models.ParkingLot;
 
@@ -49,11 +44,13 @@ public class ParkingLotAdapter extends BaseAdapter {
         }
         ParkingLot p = parkingLots.get(position);
         TextView tvLotName = view.findViewById(R.id.tvLotName);
-        TextView tvRating = view.findViewById(R.id.tvRating);
-        TextView tvDistance = view.findViewById(R.id.tvDistance);
+        TextView tvAvailability = view.findViewById(R.id.tvAvailability);
+        TextView tvSafety = view.findViewById(R.id.tvSafety);
+        TextView tvCleanliness = view.findViewById(R.id.tvCleanliness);
         tvLotName.setText("Lot Name: "+p.name);
-        tvRating.setText("Rating: "+p.avgAvailability);
-        tvDistance.setText("Distance: ");
+        tvAvailability.setText("Availability: "+p.avgAvailability);
+        tvSafety.setText("Safety: "+p.avgSafety);
+        tvCleanliness.setText("Cleanliness: "+p.avgCleanliness);
 
         return view;
     }

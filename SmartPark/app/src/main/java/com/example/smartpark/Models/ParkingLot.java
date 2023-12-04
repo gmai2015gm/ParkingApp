@@ -42,6 +42,30 @@ public class ParkingLot
                 ", ratings=" + ratings +
                 '}';
     }
+
+    public double getAvgCleanliness() {
+        return avgCleanliness;
+    }
+
+    public void setAvgCleanliness(double avgCleanliness) {
+        this.avgCleanliness = avgCleanliness;
+    }
+
+    public double getAvgSafety() {
+        return avgSafety;
+    }
+
+    public void setAvgSafety(double avgSafety) {
+        this.avgSafety = avgSafety;
+    }
+
+    public double getAvgAvailability() {
+        return avgAvailability;
+    }
+
+    public void setAvgAvailability(double avgAvailability) {
+        this.avgAvailability = avgAvailability;
+    }
 }
 
 
