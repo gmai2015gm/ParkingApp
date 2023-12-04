@@ -38,20 +38,27 @@
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/tvDistance"
+                    android:id="@+id/tvSafety"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="8dp"
-                    android:text="Distance"
+                    android:text="Safety"
                     android:textSize="12sp" />
 
                 <TextView
-                    android:id="@+id/tvRating"
+                    android:id="@+id/tvAvailability"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rating" />
+                    android:text="Availability" />
+
+                <TextView
+                    android:id="@+id/tvCleanliness"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Cleanliness" />
 
 
             </androidx.appcompat.widget.LinearLayoutCompat>

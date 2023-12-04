@@ -1,22 +1,17 @@
 package com.example.smartpark;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.example.smartpark.Models.ParkingLot;
 
 import java.util.ArrayList;
 
-public class ParkingLotAdapter extends RecyclerView.Adapter<ParkingLotViewHolder>
-{
-
+public class ParkingLotAdapter extends BaseAdapter {
     ArrayList<ParkingLot> parkingLots;
     Context context;
 
@@ -27,34 +22,41 @@ public class ParkingLotAdapter extends RecyclerView.Adapter<ParkingLotViewHolder
         this.context = context;
     }
 
-    @NonNull
     @Override
-    public ParkingLotViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-    {
-        View v = LayoutInflater.from(context).inflate(R.layout.layout_parking_lot, parent, false);
-        return new ParkingLotViewHolder(v);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ParkingLotViewHolder holder, int position)
-    {
-        ParkingLot p = parkingLots.get(position);
-        holder.tvLotName.setText("Lot Name: "+p.name);
-        holder.tvRating.setText("Rating: "+p.avgAvailability);
-        holder.tvDistance.setText("Distance: "+p.distance);
-
-        holder.itemView.setOnClickListener(v -> {
-//            Intent i = new Intent(context,);
-//            i.putExtra("id", a.id);
-//            ((Activity) context).startActivityForResult(i, 1);
-        });
-    }
-
-    @Override
-    public int getItemCount()
-    {
+    public int getCount() {
         return parkingLots.size();
     }
+
+    @Override
+    public Object getItem(int position) {
+        return parkingLots.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
+
+    @Override
+    public View getView(int position, View view, ViewGroup parent) {
+        if(view==null){
+            view = LayoutInflater.from(context).inflate(R.layout.layout_parking_lot,parent, false);
+
+        }
+        ParkingLot p = parkingLots.get(position);
+        TextView tvLotName = view.findViewById(R.id.tvLotName);
+        TextView tvAvailability = view.findViewById(R.id.tvAvailability);
+        TextView tvSafety = view.findViewById(R.id.tvSafety);
+        TextView tvCleanliness = view.findViewById(R.id.tvCleanliness);
+        tvLotName.setText("Lot Name: "+p.name);
+        tvAvailability.setText("Availability: "+p.avgAvailability);
+        tvSafety.setText("Safety: "+p.avgSafety);
+        tvCleanliness.setText("Cleanliness: "+p.avgCleanliness);
+
+        return view;
+    }
+
+
     public void updateData(ArrayList<ParkingLot> newParkingLots) {
         parkingLots.clear(); // Clear existing data
         parkingLots.addAll(newParkingLots); // Add new data

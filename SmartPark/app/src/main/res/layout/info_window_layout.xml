@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#EA4335"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/tvMapLotName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#050505"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvMapAvailability"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#050505" />
+
+    <TextView
+        android:id="@+id/tvMapSafety"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#050505" />
+
+    <TextView
+        android:id="@+id/tvMapCleanliness"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#0B0A0A" />
+</LinearLayout>

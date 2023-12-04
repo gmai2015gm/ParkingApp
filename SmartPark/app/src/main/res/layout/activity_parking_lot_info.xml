@@ -4,27 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollbarSize="2dp"
     tools:context=".ParkingLotInfo">
 
-    <Switch
-        android:id="@+id/toggleView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="44dp"
-        android:text="List View"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <SeekBar
-        android:id="@+id/sbMiles"
-        android:layout_width="120dp"
-        android:layout_height="22dp"
-        android:layout_marginStart="108dp"
-        android:layout_marginBottom="4dp"
-        android:max="45"
-        app:layout_constraintBottom_toBottomOf="@+id/toggleView"
-        app:layout_constraintStart_toEndOf="@+id/toggleView" />
+<!--    <SeekBar-->
+<!--        android:id="@+id/sbMiles"-->
+<!--        android:layout_width="120dp"-->
+<!--        android:layout_height="22dp"-->
+<!--        android:layout_marginBottom="4dp"-->
+<!--        android:max="45"-->
+<!--        android:visibility="invisible"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/toggleView"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.604"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/spSortOption" />-->
 
     <TextView
         android:id="@+id/textView"
@@ -33,6 +27,7 @@
         android:background="#7ACDF3"
         android:text="SmartPark"
         android:textAlignment="center"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -42,37 +37,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="153dp" />
+        app:layout_constraintGuide_begin="142dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvParkingLots"
-        android:layout_width="409dp"
-        android:layout_height="662dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
+    <!--    <TextView-->
+<!--        android:id="@+id/tvMiles"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/sbMiles"-->
+<!--        app:layout_constraintHorizontal_bias="0.529"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/sbMiles"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/sbMiles" />-->
 
     <Button
         android:id="@+id/btnSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="10dp"
         android:backgroundTint="#7ACDF3"
         android:text="Get Parking!"
-        app:layout_constraintBottom_toTopOf="@+id/rvParkingLots"
+        app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/tvMiles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/sbMiles"
-        app:layout_constraintHorizontal_bias="0.529"
-        app:layout_constraintStart_toStartOf="@+id/sbMiles"
-        app:layout_constraintTop_toBottomOf="@+id/sbMiles" />
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -82,10 +69,65 @@
         android:layout_width="match_parent"
         android:layout_height="662dp"
         android:visibility="invisible"
-        tools:context=".MapsActivity"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        />
+        tools:context=".MapsActivity" />
+
+    <ListView
+        android:id="@+id/lstParkingLots"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+        <Switch
+            android:id="@+id/toggleView"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginStart="5dp"
+            android:text="List View"
+            android:textSize="14sp" />
+
+        <!--            app:layout_constraintBottom_toBottomOf="@+id/toggleView"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/toggleView" />-->
+
+        <Spinner
+            android:id="@+id/spSortOption"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="-2dp" />
+
+        <Spinner
+            android:id="@+id/spSortOrder"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="-2dp"
+            android:visibility="invisible" />
+        <!--            app:layout_constraintBottom_toBottomOf="@+id/spSortOption"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintHorizontal_bias="0.025"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/spSortOption" />-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
