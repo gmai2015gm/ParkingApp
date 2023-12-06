@@ -3,11 +3,15 @@
 
     <string name="app_info">Welcome to SmartPark!
         This app was made to provide information to people looking for parking in places where parking can be difficult.
-        You can view parking lots within a specified range from your current location, view their reports made by others using the app, or make a report about a parking lot yourself!
+        You can view parking lots using a specified filter and order that best suits what you are looking for, view their reports made by others using the app, or make a report about a parking lot yourself!
         Provided are three buttons: Find Parking Lots, View Parking Lot Reports, and Settings.\n
-        Find Parking Lots takes you to the Parking Lot Finder where you can specify a range to find all parking lots within the specified range from your current location.\n
+        \n
+        Find Parking Lots takes you to the Parking Lot Finder where you can specify a filter like Cleanliness, Safety, Availability, and Distance with an order preference, High to Low or Low to High, to find the parking you lot that matches your needs.\n
+        \n
         View Parking Lot Reports takes you to the parking lot reports page where you can view reports posted by other users and even post your own reports.\n
-        Settings takes you to the settings page where you can change you settings.\n
+        \n
+        Settings takes you to the settings page where you can change your settings.\n
+        \n
         Thank you for using SmartPark!
     </string>
 </resources>
