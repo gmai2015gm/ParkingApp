@@ -33,11 +33,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        btnSettings.setOnClickListener(v -> {
-            Intent i = new Intent(this, Settings.class);
-            startActivity(i);
-            finish();
-        });
+//        btnSettings.setOnClickListener(v -> {
+//            Intent i = new Intent(this, Settings.class);
+//            startActivity(i);
+//            finish();
+//        });
 
         btnFindParking.setOnClickListener(v -> {
 //            Intent i = new Intent(this, ParkingLotInfo.class);
