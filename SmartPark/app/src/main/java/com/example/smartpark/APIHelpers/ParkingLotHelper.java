@@ -35,7 +35,7 @@ public class ParkingLotHelper
     {
         void onSuccess(ParkingLot result);
     }
-
+    //
     private ParkingLot parseLot(JSONObject json) throws JSONException {
         //Make the new one based on whats in the JSON
         ParkingLot newLot = new ParkingLot(
