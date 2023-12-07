@@ -1,5 +1,8 @@
 package com.example.smartpark;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +21,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -27,6 +32,9 @@ public class UserAuthActivity extends AppCompatActivity {
     boolean firstTimeUser, authingFlag;
     RequestQueue queue;
     String url;
+    SharedPreferences session;
+    SharedPreferences.Editor sessionEditor;
+    public CookieManager cookies;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,6 +44,24 @@ public class UserAuthActivity extends AppCompatActivity {
         //Set up Volley
         queue = Volley.newRequestQueue(this);
         url = "https://smartpark-api.onrender.com";
+
+        //Set up sharedprefs
+        session = this.getSharedPreferences("Session", Context.MODE_PRIVATE);
+        sessionEditor = session.edit();
+
+        //Get any existing cookies
+        cookies = (CookieManager) CookieHandler.getDefault();
+
+        //If the user is already signed in, go to landing screen
+        if (cookies != null && cookies.getCookieStore().getCookies().size() > 0) {
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+            finish();
+        }
+
+        //Set up cookies
+        cookies = new CookieManager();
+        CookieHandler.setDefault(cookies);
 
         //Nothing is authorizing at start
         authingFlag = false;
@@ -136,10 +162,20 @@ public class UserAuthActivity extends AppCompatActivity {
                     try {
                         int successFlag = response.getInt("success");
                         if (successFlag == 1){
-                            //For now, do nothing
+                            //Save session to sharedprefs
+                            sessionEditor.putString("SessionKey", response.getString("sessionID"));
+                            sessionEditor.putString("username", response.getString("username"));
+                            sessionEditor.commit();
+                            System.out.println(response.getString("username"));
+
+                            //Send user to landing screen
                             Log.i("Sign In", "Successful sign in");
+                            Intent i = new Intent(this, MainActivity.class);
+                            startActivity(i);
+                            finish();
                         } else {
-                            Log.e("Sign In", "Could not sign in user. (No error)");
+                            Log.e("Sign In", "Could not sign in user. (No server error)");
+                            Toast.makeText(this, "There was an issue signing in. Please check your credentials and try again.", Toast.LENGTH_LONG).show();
                         }
                     } catch (JSONException e) {
                         Log.e("Sign In", "Could not read the server response.\n" + e);
@@ -148,7 +184,7 @@ public class UserAuthActivity extends AppCompatActivity {
                 }
                 , error -> {
                     Log.e("Sign In", "Could not sign in user.");
-                    Toast.makeText(this, "Could not sign in user.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Could not reach the server.", Toast.LENGTH_SHORT).show();
                     authingFlag = false;
                 }
         );
@@ -168,7 +204,7 @@ public class UserAuthActivity extends AppCompatActivity {
         //Create the registration
         JSONObject registration = new JSONObject();
         try {
-            registration.put("userName", etUsername.getText());
+            registration.put("username", etUsername.getText());
             registration.put("email",etEmail.getText());
             registration.put("password", hashPass()); //This helper function returns the hashed password
         } catch (JSONException e) {
@@ -183,19 +219,28 @@ public class UserAuthActivity extends AppCompatActivity {
                     try {
                         int successFlag = response.getInt("success");
                         if (successFlag == 1){
-                            //For now, do nothing
+                            //Save session to sharedprefs
+                            sessionEditor.putString("SessionKey", response.getString("sessionID"));
+                            sessionEditor.putString("username", response.getString("username"));
+                            sessionEditor.commit();
+
+                            //Send user to landing screen
                             Log.i("Register", "Successful registration");
+                            Intent i = new Intent(this, MainActivity.class);
+                            startActivity(i);
+                            finish();
                         } else {
                             Log.e("Register", "Could not register the user. (No error)");
                         }
                     } catch (JSONException e) {
                         Log.e("Register", "Could not read server response.\n" + e);
+                        Toast.makeText(this, "There was an issue registering. Please try again using a different username and email.", Toast.LENGTH_LONG).show();
                     }
                     authingFlag = false;
                 }
                 , error -> {
                     Log.e("Register", "Could not register user.\n" + error);
-                    Toast.makeText(this, "Could not register user.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Could not reach the server.", Toast.LENGTH_SHORT).show();
                     authingFlag = false;
                 }
         );
