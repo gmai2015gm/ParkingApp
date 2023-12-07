@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         btnViewReports.setOnClickListener(v -> {
             Intent i = new Intent(this, ReportActivity.class);
             startActivity(i);
-            finish();
         });
 
         btnSettings.setOnClickListener(v -> {

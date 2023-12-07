@@ -21,7 +21,7 @@ public class CustomScrollView extends ScrollView {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent motionEvent) {
-        final int action = motionEvent.getAction();
+        int action = motionEvent.getAction();
 
         switch (action) {
             case MotionEvent.ACTION_MOVE:

@@ -96,7 +96,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 
 
         // Get the SupportMapFragment
-        SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.mapReport);
         mapFragment.getMapAsync(this);
 
         // Set the initial state of the map and ListView
@@ -176,8 +176,8 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
                 Log.d("maps", "getLocation: permissions NOT granted");
             }
             break;
-            }
-            }
+        }
+    }
 
 
 
@@ -335,7 +335,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
-    class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+    static class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         private final View mWindow;
         private Context mContext;

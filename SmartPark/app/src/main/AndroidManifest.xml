@@ -18,6 +18,9 @@
         android:theme="@style/Theme.SmartPark"
         tools:targetApi="31">
         <activity
+            android:name=".AddLotActivity"
+            android:exported="false" />
+        <activity
             android:name=".ReportActivity"
             android:exported="false" />
 
@@ -45,7 +48,7 @@
             android:exported="false" />
         <activity
             android:name=".Settings"
-            android:exported="false"></activity>
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -12,8 +12,19 @@
         android:layout_height="wrap_content"
         android:paddingVertical="0dp">
 
-<fragment
-            android:id="@+id/map"
+        <Button
+            android:id="@+id/btnAddLot"
+            android:layout_width="135dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#2196F3"
+            android:text="Add Parking Lot"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mapReport" />
+
+        <fragment
+            android:id="@+id/mapReport"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="411dp"
             android:layout_height="429dp"
@@ -22,43 +33,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtLotName"
-            tools:context=".MapsActivity" />
+            tools:context=".ReportActivity" />
 
-        <SeekBar
-            android:id="@+id/barBusiness"
-            android:layout_width="300dp"
-            android:layout_height="25dp"
-            android:layout_marginTop="4dp"
-            android:max="10"
-            android:progress="0"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.504"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtBusiness" />
-
-        <TextView
-            android:id="@+id/lblBusiness"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="0"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="@+id/barBusiness"
-            app:layout_constraintStart_toStartOf="@+id/barBusiness"
-            app:layout_constraintTop_toBottomOf="@+id/barBusiness" />
-
-        <TextView
-            android:id="@+id/txtBusiness"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
-            android:layout_marginTop="40dp"
-            android:text="Business"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lblAvailable" />
-
-        <SeekBar
+            <SeekBar
             android:id="@+id/barAvailable"
             android:layout_width="300dp"
             android:layout_height="25dp"
@@ -78,7 +55,7 @@
             android:text="Availability"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/map" />
+            app:layout_constraintTop_toBottomOf="@+id/btnAddLot" />
 
         <TextView
             android:id="@+id/lblAvailable"
@@ -102,16 +79,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/txtClean"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
-            android:layout_marginTop="40dp"
-            android:text="Cleanliness"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lblBusiness" />
+            <TextView
+                android:id="@+id/txtClean"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="56dp"
+                android:layout_marginTop="40dp"
+                android:text="Cleanliness"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lblAvailable" />
 
         <SeekBar
             android:id="@+id/barClean"
