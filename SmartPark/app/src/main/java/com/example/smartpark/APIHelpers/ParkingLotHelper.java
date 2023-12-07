@@ -162,7 +162,7 @@ public class ParkingLotHelper
                 //Send it to the callback
                 callback.onSuccess(result);
             }, error -> {
-                
+
             }
         );
         queue.add(r);

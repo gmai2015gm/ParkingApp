@@ -26,4 +26,45 @@ public class ParkingLot
         this.avgAvailability = avgAvailability;
         this.ratings = ratings;
     }
+
+
+    @Override
+    public String toString() {
+        return "ParkingLot{" +
+                "ID='" + ID + '\'' +
+                ", name='" + name + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", avgCleanliness=" + avgCleanliness +
+                ", avgSafety=" + avgSafety +
+                ", avgAvailability=" + avgAvailability +
+                ", ratings=" + ratings +
+                '}';
+    }
+
+    public double getAvgCleanliness() {
+        return avgCleanliness;
+    }
+
+    public void setAvgCleanliness(double avgCleanliness) {
+        this.avgCleanliness = avgCleanliness;
+    }
+
+    public double getAvgSafety() {
+        return avgSafety;
+    }
+
+    public void setAvgSafety(double avgSafety) {
+        this.avgSafety = avgSafety;
+    }
+
+    public double getAvgAvailability() {
+        return avgAvailability;
+    }
+
+    public void setAvgAvailability(double avgAvailability) {
+        this.avgAvailability = avgAvailability;
+    }
 }
+
+
