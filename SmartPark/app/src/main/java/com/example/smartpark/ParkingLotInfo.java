@@ -198,6 +198,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 
         locationProviderClient.getLastLocation()
                 .addOnSuccessListener(this, location -> {
+                    Log.d("Testing", "" + location);
                     if (location != null) {
                         double userLat = location.getLatitude();
                         double userLng = location.getLongitude();
@@ -214,15 +215,33 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
                             @Override
                             public void onSuccess(ArrayList<ParkingLot> result) {
                                 // Update ListView adapter and Google Map markers
+                                Log.d("Testing", result.toString());
                                 updateMapView(result);
                                 updateListView(result);
-                                System.out.println(result);
+
 
                             }
                         });
 
                     } else {
                         // Handle the case where location is null
+
+                        // Create an instance of ParkingLotHelper
+                        RequestQueue queue = Volley.newRequestQueue(this);
+                        ParkingLotHelper parkingLotHelper = new ParkingLotHelper(this, queue);
+
+                        // Call getAllLots
+                        parkingLotHelper.getAllLots(new ParkingLotHelper.ArrayCallbackFunction() {
+                            @Override
+                            public void onSuccess(ArrayList<ParkingLot> result) {
+                                // Update ListView adapter and Google Map markers
+                                Log.d("Testing", result.toString());
+                                updateMapView(result);
+                                updateListView(result);
+
+
+                            }
+                        });
                     }
                 })
                 .addOnFailureListener(this, e -> {
