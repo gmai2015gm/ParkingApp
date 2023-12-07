@@ -64,8 +64,6 @@ public class Settings extends AppCompatActivity {
 
     //Confirmation menus that actually handle the setting actions
     public void confirm(View v) {
-        Intent i;
-
         //Switch case so each thing is handled appropriately
         switch (action){
             case 1:
@@ -81,6 +79,11 @@ public class Settings extends AppCompatActivity {
                                     if (cookies.getCookieStore().getCookies().size() > 0) {
                                         cookies.getCookieStore().removeAll();
                                     }
+
+                                    //Send user to the sign in/registration screen
+                                    startActivity(new Intent(this, UserAuthActivity.class));
+                                    finish();
+
                                     Log.i("Sign Out", "Successful sign out");
                                 } else {
                                     Log.e("Sign Out", "Could not sign out user.");
@@ -96,9 +99,6 @@ public class Settings extends AppCompatActivity {
                 );
                 queue.add(signOutReq);
 
-                //Send user to the sign in/registration screen
-                i = new Intent(this, UserAuthActivity.class);
-                startActivity(i);
                 break;
             case 2:
                 Log.i("Settings", "Disabling location services");
@@ -106,14 +106,14 @@ public class Settings extends AppCompatActivity {
 
                 //Send user to the sign in/registration screen
                 //Code snippet credits: Waynn Lue & ognian on Stack Overflow
-                i = new Intent(Intent.ACTION_MAIN);
+                Intent i = new Intent(Intent.ACTION_MAIN);
                 i.addCategory(Intent.CATEGORY_HOME);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
+                finish();
                 break;
             case 3:
         }
-        finish();
     }
 
     public void decline(View v){
