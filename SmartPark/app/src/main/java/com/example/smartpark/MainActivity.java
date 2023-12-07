@@ -50,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnFindParking.setOnClickListener(v -> {
-//            Intent i = new Intent(this, ParkingLotInfo.class);
-//            startActivity(i);
-//            finish();
+            Intent i = new Intent(this, ParkingLotInfo.class);
+            startActivity(i);
+            finish();
         });
 
         ivAppInfo.setOnClickListener(v -> {
