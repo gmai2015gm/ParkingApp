@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallback{
+    // UI elements
     ListView lstParkingLots;
     GoogleMap map;
     Switch toggleView;
@@ -50,6 +51,8 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
     ParkingLotAdapter adapter;
     Spinner spSortOption;
     Spinner spSortOrder;
+
+    // User's current longitude and latitude
     double lng, lat;
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -62,25 +65,23 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        MapsInitializer.initialize(this);
-//        MapsInitializer.initialize(this, MapsInitializer.Renderer.LATEST, l->{});
 
         setContentView(R.layout.activity_parking_lot_info);
 
+        // Initialize UI components and array adapters
         lstParkingLots = findViewById(R.id.lstParkingLots);
         toggleView = findViewById(R.id.toggleView);
-
         parkingLots = new ArrayList<>();
         adapter = new ParkingLotAdapter(this, parkingLots);
-
         btnSearch = findViewById(R.id.btnSearch);
         spSortOption = findViewById(R.id.spSortOption);
         spSortOrder = findViewById(R.id.spSortOrder);
 
-
+        // Set adapter to list view
         lstParkingLots.setAdapter(adapter);
 
 
+        // Setup spinners with array adapters for sorting options
         ArrayAdapter<String> sortOptionAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, sortOptions);
         sortOptionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spSortOption.setAdapter(sortOptionAdapter);
@@ -92,6 +93,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 
         spSortOrder.setAdapter(sortOrderAdapter);
 
+        // Request location permissions if necessary
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
         }
@@ -133,6 +135,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
             getUserLocationAndFetchParkingLots();
         });
 
+        // Sorting options listener
         spSortOption.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -142,14 +145,17 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
                     case "Cleanliness":
                     case "Safety":
                     case "Availability":
+                        // Show sorting order spinner for these options
                         spSortOrder.setVisibility(View.VISIBLE);
                         spSortOrder.setAdapter(sortOrderAdapter);
                         break;
                     case "Distance":
+                        // Show distance sorting order spinner for this option
                         spSortOrder.setVisibility(View.VISIBLE);
                         spSortOrder.setAdapter(sortOrderAdapter2);
                         break;
                     default:
+                        // Hide sorting order spinner for other options
                         spSortOrder.setVisibility(View.GONE);
                         break;
                 }
@@ -185,20 +191,18 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 
 
     private void getUserLocationAndFetchParkingLots() {
-
+        // Get the FusedLocationProviderClient for accessing location
         FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-
-
+        // Check for location permissions
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Check for permissions again, just in case
+            // Request permissions if not already granted
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_PERMISSION_REQUEST_CODE);
             return;
         }
 
-
-
+        // Get the last known location of the user
         locationProviderClient.getLastLocation()
                 .addOnSuccessListener(this, location -> {
                     if (location != null) {
@@ -237,7 +241,6 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
-//        map.setInfoWindowAdapter(new CustomInfoWindowAdapter(this));
         for (ParkingLot lot:parkingLots) {
             float lat = lot.latitude;
             float longitude = lot.longitude;
@@ -249,24 +252,14 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
     }
 
 
+    //Method to update map view with new markers
     private void updateMapView(ArrayList<ParkingLot> parkingLots) {
-//        if (map != null) {
-//            for (ParkingLot lot : parkingLots) {
-//                LatLng position = new LatLng(lot.latitude, lot.longitude);
-//                map.addMarker(new MarkerOptions().position(position).title(lot.name));
-//            }
-//        }
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-//                map.setInfoWindowAdapter(new CustomInfoWindowAdapter(getApplicationContext()));
                 if (map != null) {
                     map.clear(); // Clear existing markers
-//                    for (ParkingLot lot : parkingLots) {
-//                        LatLng position = new LatLng(lot.latitude, lot.longitude);
-//                        map.addMarker(new MarkerOptions().position(position).title(lot.name));
-//                    }
+
                     for (ParkingLot lot : parkingLots) {
                         LatLng position = new LatLng(lot.latitude, lot.longitude);
                         Marker marker = map.addMarker(new MarkerOptions().position(position).title(lot.name));
@@ -278,6 +271,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
         });
     }
 
+    // Method to update the list view with new data
     public void updateListView(ArrayList<ParkingLot> newParkingLots) {
         parkingLots.clear();
         parkingLots.addAll(newParkingLots);
@@ -285,6 +279,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
         adapter.notifyDataSetChanged();
     }
 
+    // Method to calculate distance between two points
     public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         final double EARTH_RADIUS = 3959; // Radius of the Earth in miles
         double lat1Rad = Math.toRadians(lat1);

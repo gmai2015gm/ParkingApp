@@ -56,9 +56,4 @@ public class ParkingLotAdapter extends BaseAdapter {
     }
 
 
-    public void updateData(ArrayList<ParkingLot> newParkingLots) {
-        parkingLots.clear(); // Clear existing data
-        parkingLots.addAll(newParkingLots); // Add new data
-        notifyDataSetChanged(); // Notify the adapter to refresh the view
-    }
 }
