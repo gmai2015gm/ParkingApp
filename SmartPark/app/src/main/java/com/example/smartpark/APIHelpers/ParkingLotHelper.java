@@ -46,6 +46,10 @@ public class ParkingLotHelper
     {
         void onComplete(boolean success);
     }
+    public interface DeleteCallbackFunction
+    {
+        void onComplete(boolean success);
+    }
 
     private ParkingLot parseLot(JSONObject json) throws JSONException
     {
@@ -58,6 +62,7 @@ public class ParkingLotHelper
                 json.getDouble("avgCleanliness"),
                 json.getDouble("avgSafety"),
                 json.getDouble("avgAvailability"),
+                // json.getInt("ratingCount"),
                 null
         );
 

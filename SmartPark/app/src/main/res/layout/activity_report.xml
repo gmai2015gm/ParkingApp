@@ -16,12 +16,13 @@
             android:id="@+id/btnAddLot"
             android:layout_width="135dp"
             android:layout_height="56dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="40dp"
             android:backgroundTint="#2196F3"
             android:text="Add Parking Lot"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mapReport" />
+            app:layout_constraintTop_toBottomOf="@+id/lblSafety" />
 
         <fragment
             android:id="@+id/mapReport"
@@ -35,12 +36,13 @@
             app:layout_constraintTop_toBottomOf="@+id/txtLotName"
             tools:context=".ReportActivity" />
 
-            <SeekBar
+        <SeekBar
             android:id="@+id/barAvailable"
             android:layout_width="300dp"
             android:layout_height="25dp"
             android:layout_marginTop="4dp"
             android:max="10"
+            android:min="1"
             android:progress="0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -55,14 +57,14 @@
             android:text="Availability"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnAddLot" />
+            app:layout_constraintTop_toBottomOf="@+id/mapReport" />
 
         <TextView
             android:id="@+id/lblAvailable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="0"
+            android:text="1"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="@+id/barAvailable"
             app:layout_constraintStart_toStartOf="@+id/barAvailable"
@@ -96,6 +98,7 @@
             android:layout_height="25dp"
             android:layout_marginTop="4dp"
             android:max="10"
+            android:min="1"
             android:progress="0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -106,7 +109,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="0"
+            android:text="1"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="@+id/barClean"
             app:layout_constraintStart_toStartOf="@+id/barClean"
@@ -142,6 +145,7 @@
             android:layout_height="25dp"
             android:layout_marginTop="4dp"
             android:max="10"
+            android:min="1"
             android:progress="0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -153,7 +157,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="0"
+            android:text="1"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -164,12 +168,12 @@
             android:id="@+id/btnSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="10dp"
             android:backgroundTint="#4CAF50"
             android:text="Save Ratings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lblSafety" />
+            app:layout_constraintTop_toBottomOf="@+id/btnAddLot" />
 
         <Button
             android:id="@+id/btnCancel"
