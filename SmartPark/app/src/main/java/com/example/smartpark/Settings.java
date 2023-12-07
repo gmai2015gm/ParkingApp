@@ -7,12 +7,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+
+import java.net.CookieHandler;
+import java.net.CookieManager;
 
 public class Settings extends AppCompatActivity {
 
@@ -23,6 +31,7 @@ public class Settings extends AppCompatActivity {
     RequestQueue queue;
     String url;
     int action;
+    CookieManager cookies;
 
 
     @Override
@@ -44,6 +53,9 @@ public class Settings extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         txtConfMsg = findViewById(R.id.txtConfMsg);
 
+        //Get cookies
+        cookies = (CookieManager) CookieHandler.getDefault();
+
         //Hide the confirmation menu
         txtConfMsg.setVisibility(View.INVISIBLE);
         btnConfirm.setVisibility(View.INVISIBLE);
@@ -57,22 +69,38 @@ public class Settings extends AppCompatActivity {
         //Switch case so each thing is handled appropriately
         switch (action){
             case 1:
-                Log.i("Settings", "Deleting Account");
-                //Insert deletion logic here
-
-                //Send user to the registration/sign in screen
-                i = new Intent(this, UserAuthActivity.class);
-                startActivity(i);
-                break;
-            case 2:
                 Log.i("Settings", "Signing Out");
                 //Insert sign out logic here
+                //Send the sign in request to the server and get response
+                JsonObjectRequest signOutReq = new JsonObjectRequest(Request.Method.POST, url + "/logout", null,
+                        response -> {
+                            try {
+                                int successFlag = response.getInt("success");
+                                if (successFlag == 1){
+                                    //Sign user out
+                                    if (cookies.getCookieStore().getCookies().size() > 0) {
+                                        cookies.getCookieStore().removeAll();
+                                    }
+                                    Log.i("Sign Out", "Successful sign out");
+                                } else {
+                                    Log.e("Sign Out", "Could not sign out user.");
+                                }
+                            } catch (JSONException e) {
+                                Log.e("Sign Out", "Could not read the server response.\n" + e);
+                            }
+                        }
+                        , error -> {
+                    Log.e("Sign Out", "Could not reach the server.");
+                    Toast.makeText(this, "Could not reach the server.", Toast.LENGTH_SHORT).show();
+                }
+                );
+                queue.add(signOutReq);
 
                 //Send user to the sign in/registration screen
                 i = new Intent(this, UserAuthActivity.class);
                 startActivity(i);
                 break;
-            case 3:
+            case 2:
                 Log.i("Settings", "Disabling location services");
                 //Insert disable permission logic here
 
@@ -83,6 +111,7 @@ public class Settings extends AppCompatActivity {
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
                 break;
+            case 3:
         }
         finish();
     }
@@ -101,24 +130,20 @@ public class Settings extends AppCompatActivity {
     }
 
     //Methods for the various setting actions
-    public void delAcct(View v) {
-        action = 1;
-        displayConfirmation("Are you sure you want to delete your account?\nYou will be returned to the registration screen.");
-    }
-
     public void signOut(View v) {
-        action = 2;
+        action = 1;
         displayConfirmation("Are you sure you want to sign out?\nYou will be returned to the sign in screen.");
     }
 
     public void disableLocServs(View v){
-        action = 3;
+        action = 2;
         displayConfirmation("Are you sure you want to disable location permissions?\nThe app cannot function without these and will close as a result.");
     }
 
     //Disable notifications needs to be handled differently
     public void disableNotifs(View v) {
-
+        action = 3;
+        displayConfirmation("Are you sure you want to disable notifications?");
     }
 
     //Helper method to display the confirmation

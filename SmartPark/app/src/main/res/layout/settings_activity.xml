@@ -60,17 +60,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnRemoveNotifs" />
 
-    <Button
-        android:id="@+id/btnDelAcct"
-        android:layout_width="200dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:onClick="delAcct"
-        android:text="Delete Account"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSignOut" />
-
     <TextView
         android:id="@+id/txtConfMsg"
         android:layout_width="wrap_content"
@@ -80,7 +69,7 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnDelAcct" />
+        app:layout_constraintTop_toBottomOf="@+id/btnSignOut" />
 
     <Button
         android:id="@+id/btnConfirm"
@@ -110,8 +99,8 @@
 
     <ImageButton
         android:id="@+id/btnBack"
-        android:layout_width="90dp"
-        android:layout_height="88dp"
+        android:layout_width="106dp"
+        android:layout_height="107dp"
         android:backgroundTint="#FEFAFD"
         android:onClick="back"
         android:scaleType="fitCenter"
