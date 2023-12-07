@@ -23,10 +23,9 @@ import java.util.ArrayList;
 
 public class ParkingLotHelper
 {
-
-    public final String TAG = "ParkingLotHelper";
     Context context;
     RequestQueue queue;
+    public static final String TAG = "APICALLS";
 
     public ParkingLotHelper(Context context, RequestQueue queue)
     {

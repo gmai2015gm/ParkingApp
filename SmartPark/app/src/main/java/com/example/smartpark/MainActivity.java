@@ -12,6 +12,12 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,6 +52,42 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(this, Settings.class);
             startActivity(i);
             finish();
+//            Log.i("Settings", "Signing Out");
+//            //Insert sign out logic here
+//            //Send the sign in request to the server and get response
+//            JsonObjectRequest signOutReq = new JsonObjectRequest(Request.Method.POST, url + "/logout", null,
+//                    response -> {
+//                        try {
+//                            int successFlag = response.getInt("success");
+//                            if (successFlag == 1){
+//                                //Sign user out
+//                                if (cookies.getCookieStore().getCookies().size() > 0) {
+//                                    cookies.getCookieStore().removeAll();
+//                                }
+                                //Send user to the sign in/registration screen
+                    //            i = new Intent(this, UserAuthActivity.class);
+                    //            startActivity(i);
+
+//                                Log.i("Sign Out", "Successful sign out");
+//                            } else {
+//                                Log.e("Sign Out", "Could not sign out user.");
+//                            }
+//                        } catch (JSONException e) {
+//                            Log.e("Sign Out", "Could not read the server response.\n" + e);
+//                        }
+//                    }
+//                    , error -> {
+//                Log.e("Sign Out", "Could not reach the server.");
+//                Toast.makeText(this, "Could not reach the server.", Toast.LENGTH_SHORT).show();
+//            }
+//            );
+//            queue.add(signOutReq);
+
+
+
+//            Intent i = new Intent(this, Settings.class);
+//            startActivity(i);
+//            finish();
         });
 
         btnFindParking.setOnClickListener(v -> {
