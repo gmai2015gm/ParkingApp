@@ -68,46 +68,46 @@ public class RatingHelper
     public void getRatingsByLot(String lotID, ArrayCallbackFunction callback)
     {
         JsonObjectRequest r = new JsonObjectRequest(
-            Request.Method.GET,
-            "https://smartpark-api.onrender.com/ratings/getAll/" + lotID,
-            null,
-            response -> {
-                //Populate the result
-                ArrayList<Rating> result = null;
+                Request.Method.GET,
+                "https://smartpark-api.onrender.com/ratings/getAll/" + lotID,
+                null,
+                response -> {
+                    //Populate the result
+                    ArrayList<Rating> result = null;
 
-                //Make sure it succeeded
-                int success = 0;
+                    //Make sure it succeeded
+                    int success = 0;
 
-                try {
-                    success = response.getInt("success");
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-
-                Log.d(TAG, "" + success);
-
-                if (success == 1)
-                {
                     try {
-                        result = parseRatings(response);
+                        success = response.getInt("success");
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-                }
-                else
-                {
-                    try {
-                        Log.d(TAG + "Error", response.getString("message"));
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
 
-                //Send it to the callback
-                callback.onSuccess(result);
-            }, error -> {
-                Log.d(TAG, "getAllLots: "+ error);
-            });
+                    Log.d(TAG, "" + success);
+
+                    if (success == 1)
+                    {
+                        try {
+                            result = parseRatings(response);
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    else
+                    {
+                        try {
+                            Log.d(TAG + "Error", response.getString("message"));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    //Send it to the callback
+                    callback.onSuccess(result);
+                }, error -> {
+            Log.d(TAG, "getAllLots: "+ error);
+        });
         queue.add(r);
     }
 

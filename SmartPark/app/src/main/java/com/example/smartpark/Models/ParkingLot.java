@@ -12,7 +12,6 @@ public class ParkingLot
     public double avgSafety;
     public double avgAvailability;
     public ArrayList<Rating> ratings;
-
     public ParkingLot()
     {
     }

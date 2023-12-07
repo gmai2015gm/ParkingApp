@@ -35,8 +35,13 @@ public class ParkingLotHelper
     {
         void onSuccess(ParkingLot result);
     }
+    public interface AdditionCallbackFunction
+    {
+        void onComplete(boolean success);
+    }
 
-    private ParkingLot parseLot(JSONObject json) throws JSONException {
+    private ParkingLot parseLot(JSONObject json) throws JSONException
+    {
         //Make the new one based on whats in the JSON
         ParkingLot newLot = new ParkingLot(
                 json.getString("id"),
@@ -159,6 +164,47 @@ public class ParkingLotHelper
             }, error -> {
 
             }
+        );
+        queue.add(r);
+    }
+    public void addNewLot(String name, float latitude, float longitude, AdditionCallbackFunction callback)
+    {
+        Log.d(TAG, "Making Request");
+
+        //Make sure to put together our request
+        JSONObject request = new JSONObject();
+        try {
+            request.put("entryName", name);
+            request.put("latitude", latitude);
+            request.put("longitude", longitude);
+        } catch (JSONException e) {
+            callback.onComplete(false);
+        }
+
+        //Send the request
+        JsonObjectRequest r = new JsonObjectRequest(
+                Request.Method.POST,
+                "https://smartpark-api.onrender.com/lots/add",
+                request,
+                response -> {
+                    //Make sure it succeeded
+                    int success = 0;
+
+                    try {
+                        success = response.getInt("success");
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    if (success == 1)
+                        //If it's successful, we tell the caller
+                        callback.onComplete(true);
+                    else
+                        //If it's not successful, we tell the caller
+                        callback.onComplete(false);
+                }, error -> {
+                    callback.onComplete(false);
+                }
         );
         queue.add(r);
     }
