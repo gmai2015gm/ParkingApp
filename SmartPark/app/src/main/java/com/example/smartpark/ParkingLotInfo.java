@@ -32,6 +32,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -46,7 +47,6 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
     GoogleMap map;
     Switch toggleView;
 
-    Button btnSearch;
     ArrayList<ParkingLot>parkingLots;
     ParkingLotAdapter adapter;
     Spinner spSortOption;
@@ -73,7 +73,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
         toggleView = findViewById(R.id.toggleView);
         parkingLots = new ArrayList<>();
         adapter = new ParkingLotAdapter(this, parkingLots);
-        btnSearch = findViewById(R.id.btnSearch);
+
         spSortOption = findViewById(R.id.spSortOption);
         spSortOrder = findViewById(R.id.spSortOrder);
 
@@ -131,16 +131,17 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 
 
         //Set up listener for search button to fetch parking lots
-        btnSearch.setOnClickListener(l->{
-            getUserLocationAndFetchParkingLots();
-        });
+//        btnSearch.setOnClickListener(l->{
+//            getUserLocationAndFetchParkingLots();
+//        });
 
+        getUserLocationAndFetchParkingLots();
         // Sorting options listener
         spSortOption.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedOption = sortOptions[position];
-                sortParkingLots();
+//                sortParkingLots();
                 switch (selectedOption) {
                     case "Cleanliness":
                     case "Safety":
@@ -159,6 +160,10 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
                         spSortOrder.setVisibility(View.GONE);
                         break;
                 }
+
+                //update list and map view when sort options are changed
+                getUserLocationAndFetchParkingLots();
+//                sortParkingLots();
             }
 
             @Override
@@ -166,7 +171,19 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
                 spSortOrder.setVisibility(View.GONE);
             }
         });
+        // Sorting options listener for spSortOrder
+        spSortOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Sort parking lots when order changes
+                getUserLocationAndFetchParkingLots();
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Optionally handle this case if needed
+            }
+        });
 
 
 
@@ -192,6 +209,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 
     private void getUserLocationAndFetchParkingLots() {
         // Get the FusedLocationProviderClient for accessing location
+//        ArrayList<ParkingLot>lots = new ArrayList<>();
         FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Check for location permissions
@@ -212,6 +230,20 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
 
                         lng =userLng;
                         lat = userLat;
+                        if (map != null) {
+                            LatLng userLatLng = new LatLng(lat, lng);
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 5));
+                            // Add a marker to show user's location
+                            Marker userLocationMarker= map.addMarker(new MarkerOptions()
+                                    .position(userLatLng)
+                                    .title("My Location")
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))); // Customizing the marker color (optional)
+
+
+                            // Set a unique tag for the user's location marker
+                            userLocationMarker.setTag("user_location");
+//                            map.addMarker(new MarkerOptions().position(userLatLng).title("Current Location"));
+                        }
 
                         // Create an instance of ParkingLotHelper
                         RequestQueue queue = Volley.newRequestQueue(this);
@@ -225,6 +257,12 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
                                 Log.d("Testing", result.toString());
                                 updateMapView(result);
                                 updateListView(result);
+
+//                                parkingLots.addAll(result);
+//                                lots = result;
+//                                parkingLots = result;
+
+
 
 
                             }
@@ -246,6 +284,9 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
                                 updateMapView(result);
                                 updateListView(result);
 
+//                                parkingLots.addAll(result);
+//                                parkingLots = result;
+
 
                             }
                         });
@@ -254,6 +295,8 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
                 .addOnFailureListener(this, e -> {
                     // Handle the failure in getting location
                 });
+
+
     }
 
 
@@ -265,7 +308,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
             float longitude = lot.longitude;
             LatLng current = new LatLng(lat,longitude);
             googleMap.addMarker(new MarkerOptions().position(current).title(lot.name));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(current));
+//            googleMap.moveCamera(CameraUpdateFactory.newLatLng(current));
         }
 
     }
@@ -277,7 +320,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
             @Override
             public void run() {
                 if (map != null) {
-                    map.clear(); // Clear existing markers
+//                    map.clear(); // Clear existing markers
 
                     for (ParkingLot lot : parkingLots) {
                         LatLng position = new LatLng(lot.latitude, lot.longitude);
@@ -388,6 +431,11 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
         // Returns the entire view for the info window
         @Override
         public View getInfoWindow(Marker marker) {
+            // Check if the marker is the user's location
+            if ("user_location".equals(marker.getTag())) {
+                // Return null to use the default info window for the user's location
+                return null;
+            }
             renderWindowText(marker, mWindow);
             return mWindow;
         }
@@ -395,6 +443,11 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
         // Returns the contents inside the default info window frame
         @Override
         public View getInfoContents(Marker marker) {
+            // Check if the marker is the user's location
+            if ("user_location".equals(marker.getTag())) {
+                // Return null to use the default info window for the user's location
+                return null;
+            }
             renderWindowText(marker, mWindow);
             return mWindow;
         }
