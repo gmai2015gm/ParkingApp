@@ -46,8 +46,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="View Parking Lot Reports"
-        app:layout_constraintEnd_toEndOf="@+id/btnSettings"
-        app:layout_constraintStart_toStartOf="@+id/btnSettings"
+        app:layout_constraintEnd_toEndOf="@+id/btnFindParking"
+        app:layout_constraintStart_toStartOf="@+id/btnFindParking"
         app:layout_constraintTop_toBottomOf="@+id/btnFindParking" />
 
     <ImageView

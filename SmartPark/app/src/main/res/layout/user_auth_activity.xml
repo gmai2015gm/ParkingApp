@@ -12,6 +12,7 @@
         android:background="#7ACCF2"
         android:gravity="center"
         android:text="Smart Park"
+        android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
