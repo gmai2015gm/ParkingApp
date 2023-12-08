@@ -38,6 +38,10 @@ public class RatingHelper
     {
         void onSuccess(Rating result);
     }
+    public interface AdditionCallbackFunction
+    {
+        void onComplete(boolean success);
+    }
     private Rating parseRating(JSONObject rawRating) throws JSONException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.ENGLISH);
 
@@ -160,6 +164,52 @@ public class RatingHelper
                 }, error -> {
 
         }
+        );
+        queue.add(r);
+    }
+    public void addNewRating(String userName, ParkingLot parkingLot, int availability,
+                             int cleanliness, int safety, RatingHelper.AdditionCallbackFunction callback)
+    {
+        Log.d(TAG, "Making Request");
+
+        //Make sure to put together our request
+        JSONObject request = new JSONObject();
+        try {
+            request.put("username", userName);
+            request.put("parkingLot", parkingLot);
+            request.put("cleanliness", cleanliness);
+            request.put("safety", safety);
+            request.put("availability", availability);
+            request.put("notes", "");
+            request.put("timestamp", LocalDateTime.now());
+        } catch (JSONException e) {
+            callback.onComplete(false);
+        }
+
+        //Send the request
+        JsonObjectRequest r = new JsonObjectRequest(
+                Request.Method.POST,
+                "https://smartpark-api.onrender.com/ratings/add",
+                request,
+                response -> {
+                    //Make sure it succeeded
+                    int success = 0;
+
+                    try {
+                        success = response.getInt("success");
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    if (success == 1)
+                        //If it's successful, we tell the caller
+                        callback.onComplete(true);
+                    else
+                        //If it's not successful, we tell the caller
+                        callback.onComplete(false);
+                }, error -> {
+                    callback.onComplete(false);
+                }
         );
         queue.add(r);
     }

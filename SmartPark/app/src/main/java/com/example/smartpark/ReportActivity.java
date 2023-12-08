@@ -22,7 +22,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.example.smartpark.APIHelpers.ParkingLotHelper;
+import com.example.smartpark.APIHelpers.RatingHelper;
 import com.example.smartpark.Models.ParkingLot;
+import com.example.smartpark.Models.Rating;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -44,8 +46,8 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
     SeekBar barAvailable, barClean, barSafety;
     Button btnAddLot, btnSave, btnCancel;
     GoogleMap map;
-    SharedPreferences lotPref;
-    SharedPreferences.Editor editor;
+    SharedPreferences session;
+    SharedPreferences.Editor sessionEditor;
 
     ArrayList<ParkingLot> parkingLots;
     ParkingLot choseP;
@@ -69,8 +71,9 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
         btnCancel = findViewById(R.id.btnCancel);
 
         txtLotName.setText("[parking lot not selected]");
-        lotPref = getSharedPreferences("SmartPark", Context.MODE_PRIVATE);
-        String parkingLotJSON = lotPref.getString("parkingLots", "");
+        //Set up sharedprefs
+        session = this.getSharedPreferences("Session", Context.MODE_PRIVATE);
+        sessionEditor = session.edit();
 
         /*
             if (parkingLotJSON.isEmpty()) {
@@ -143,44 +146,29 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
             //      LOGIC NOT FINAL. THE RATINGS WILL NEED
             //      TO BE SAVED FOR LATER.
             if(choseP != null){
-                Double tempAvailable = (double) barAvailable.getProgress();
-                Double tempClean = (double) barClean.getProgress();
-                Double tempSafe = (double) barSafety.getProgress();
+                int tempAvailable = barAvailable.getProgress();
+                int tempClean = barClean.getProgress();
+                int tempSafe = barSafety.getProgress();
+                String username = session.getString("username", "");
 
                 RequestQueue queue = Volley.newRequestQueue(this);
                 ParkingLotHelper parkingLotHelper = new ParkingLotHelper(this, queue);
 
-                parkingLotHelper.getLotByID(choseP.getID(), new ParkingLotHelper.SingleCallbackFunction() {
-
-                    @Override
-                    public void onSuccess(ParkingLot result) {
-                        if(result.ratings != null){
-                            choseP.setAvgAvailability((tempAvailable + choseP.avgAvailability)/choseP.ratings.size());
-                            choseP.setAvgCleanliness((tempAvailable + choseP.avgCleanliness)/choseP.ratings.size());
-                            choseP.setAvgSafety((tempAvailable + choseP.avgSafety)/choseP.ratings.size());
-                        } else {
-                            choseP.setAvgAvailability(tempAvailable + choseP.avgAvailability);
-                            choseP.setAvgCleanliness(tempAvailable + choseP.avgCleanliness);
-                            choseP.setAvgSafety(tempAvailable + choseP.avgSafety);
-                        }
-
-                    }
-                });
-
-                parkingLotHelper.addNewLot(choseP.getID(),
-                        choseP.latitude, choseP.longitude, new ParkingLotHelper.AdditionCallbackFunction() {
+                RatingHelper ratingHelper = new RatingHelper(this, queue);
+                ratingHelper.addNewRating(username, choseP, tempAvailable, tempClean,
+                        tempSafe, new RatingHelper.AdditionCallbackFunction() {
                             @Override
                             public void onComplete(boolean success) {
                                 if (success == true) {
-                                    Log.d("SmartPark", "NEW PARKING LOT ADDED!");
+                                    Log.d("SmartPark", "NEW RATING ADDED!");
                                     finish();
                                 } else {
                                     Toast.makeText(getApplicationContext(),
-                                            "ERROR! Parking lot was not created.",
+                                            "ERROR! RATING WAS NOT CREATED.",
                                             Toast.LENGTH_SHORT);
                                 }
                             }
-                });
+                        });
 
             }
 
@@ -198,7 +186,6 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
         super.onRestart();
 
         txtLotName.setText("[parking lot not selected]");
-        String parkingLotJSON = lotPref.getString("parkingLots", "");
 
         /*
             if (parkingLotJSON.isEmpty()) {
