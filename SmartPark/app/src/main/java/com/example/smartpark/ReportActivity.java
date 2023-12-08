@@ -131,8 +131,6 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
         });
 
         btnSave.setOnClickListener(v -> {
-            //      LOGIC NOT FINAL. THE RATINGS WILL NEED
-            //      TO BE SAVED FOR LATER.
             if(choseP != null){
                 int tempAvailable = barAvailable.getProgress();
                 int tempClean = barClean.getProgress();
@@ -171,20 +169,6 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
         super.onRestart();
 
         txtLotName.setText("[parking lot not selected]");
-
-        /*
-            if (parkingLotJSON.isEmpty()) {
-                 // Return an empty list if no favorites are saved yet
-            } else {
-                Gson gson = new Gson();
-                ParkingLot[] tempArray = gson.fromJson(parkingLotJSON, ParkingLot[].class);
-                if (tempArray != null) {
-                    parkingLots = new ArrayList<>(Arrays.asList(tempArray));
-                } else {
-                    parkingLots = new ArrayList<>();
-                }
-            }
-        */
 
         RequestQueue queue = Volley.newRequestQueue(this);
         ParkingLotHelper parkingLotHelper = new ParkingLotHelper(this, queue);
