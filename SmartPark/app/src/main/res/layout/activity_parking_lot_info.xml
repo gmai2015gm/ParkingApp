@@ -46,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="142dp" />
+        app:layout_constraintGuide_begin="101dp" />
 
     <!--    <TextView-->
 <!--        android:id="@+id/tvMiles"-->
@@ -57,18 +57,6 @@
 <!--        app:layout_constraintHorizontal_bias="0.529"-->
 <!--        app:layout_constraintStart_toStartOf="@+id/sbMiles"-->
 <!--        app:layout_constraintTop_toBottomOf="@+id/sbMiles" />-->
-
-    <Button
-        android:id="@+id/btnSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:backgroundTint="#7ACDF3"
-        android:text="Get Parking!"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
