@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -43,12 +46,14 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
     Marker m;
     LatLng lotLocation;
     EditText editNameInput;
-    TextView lblLotLat, txtLotLat, txtNameInput;
-    Button btnSaveLot;
+    TextView lblLotLat, txtLotLat, txtNameInput, txtInstructions;
+    Button btnSaveLot, btnPlaceMarker;
+    Switch switchMethod;
     SharedPreferences lotPref;
     SharedPreferences.Editor editor;
     ArrayList<ParkingLot> parkingLots;
     int lotArrayCount;
+    boolean switchFlag;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     @Override
@@ -62,32 +67,44 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
         txtLotLat = findViewById(R.id.txtLotLat);
         txtNameInput = findViewById(R.id.txtNameInput);
         btnSaveLot = findViewById(R.id.btnSaveLot);
-
+        switchMethod = findViewById(R.id.switchMethod);
+        txtInstructions = findViewById(R.id.txtInstructions);
+        btnPlaceMarker = findViewById(R.id.btnPlaceMarker);
 
         lotPref = getSharedPreferences("SmartPark", Context.MODE_PRIVATE);
         String parkingLotJSON = lotPref.getString("parkingLots", "");
-
-        /*
-            if (parkingLotJSON.isEmpty()) {
-                parkingLots = new ArrayList<>(); // Return an empty list if no favorites are saved yet
-                lotArrayCount = 0;
-            } else {
-                Gson gson = new Gson();
-                ParkingLot[] tempArray = gson.fromJson(parkingLotJSON, ParkingLot[].class);
-                if (tempArray != null) {
-                    parkingLots = new ArrayList<>(Arrays.asList(tempArray));
-                    lotArrayCount = parkingLots.size();
-                } else {
-                    parkingLots = new ArrayList<>();
-                    lotArrayCount = 0;
-                }
-            }
-        */
 
         parkingLots = new ArrayList<>();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapAddLot);
         mapFragment.getMapAsync(this);
+        switchFlag = false;
+        btnPlaceMarker.setVisibility(View.INVISIBLE);
+
+        // Set up switch listener to change methods of creating a parking lot.
+        switchMethod.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                // When the switch is on, switch to method 2 (create lot
+                // by getting the user's current location.
+                txtInstructions.setText("Method 2: Press the 'Place marker' button to set your " +
+                        "current location as the location of the new parking lot.");
+                btnPlaceMarker.setVisibility(View.VISIBLE);
+                switchMethod.setText("Method 2");
+                switchFlag = true;
+            } else {
+                //  When the switch is off, switch to method 1 (create lot
+                //  by manually placing a marker on the map)
+                txtInstructions.setText("Method 1: Place a marker on the map to indicate the " +
+                        "location for the new parking lot.");
+                btnPlaceMarker.setVisibility(View.INVISIBLE);
+                switchMethod.setText("Method 1");
+                switchFlag = false;
+            }
+        });
+
+        btnPlaceMarker.setOnClickListener(v -> {
+            getUserLocation();
+        });
 
         btnSaveLot.setOnClickListener(v -> {
             String[] coordinates = lblLotLat.getText().toString().split(", ");
@@ -118,11 +135,9 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
         });
     }
 
-
     private void getUserLocation() {
 
         FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
 
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -140,11 +155,19 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
                         double userLat = location.getLatitude();
                         double userLng = location.getLongitude();
 
-                        map.clear();
-                        lblLotLat.setText("" + userLat + ", " + userLng);
+                        SupportMapFragment mapfromButton = (SupportMapFragment) getSupportFragmentManager()
+                                .findFragmentById(R.id.mapAddLot);
+                        mapfromButton.getMapAsync(new OnMapReadyCallback() {
+                            @Override
+                            public void onMapReady(GoogleMap googleMap) {
+                                map = googleMap;
+                                map.clear();
+                                lblLotLat.setText("" + userLat + ", " + userLng);
 
-                        LatLng latLng = new LatLng(userLat, userLng);
-                        m = map.addMarker(new MarkerOptions().position(latLng));
+                                LatLng latLng = new LatLng(userLat, userLng);
+                                map.addMarker(new MarkerOptions().position(latLng));
+                            }
+                        });
                     } else {
                         // Handle the case where location is null
                     }
@@ -171,22 +194,19 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(@NonNull LatLng latLng) {
-                lotLocation = latLng;
-                map.clear();
-                lblLotLat.setText("" + latLng.latitude + ", " + latLng.longitude);
-                // Person p = new Person("John",23,100000);
-                m = map.addMarker(new MarkerOptions().position(latLng));
-                // m.setTitle("Name: "+p.name);
-                // m.setSnippet("Age : "+p.age);
-                // m.setTag(p);
+                if(switchFlag == false) {
+                    lotLocation = latLng;
+                    map.clear();
+                    lblLotLat.setText("" + latLng.latitude + ", " + latLng.longitude);
+                    m = map.addMarker(new MarkerOptions().position(latLng));
+                }
             }
         });
 
         map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(@NonNull Marker marker) {
-                // Person p = (Person)marker.getTag();
-                // Toast.makeText(MainActivity.this,"Salary: $"+p.salary+"",Toast.LENGTH_LONG).show();
+                //
             }
         });
 

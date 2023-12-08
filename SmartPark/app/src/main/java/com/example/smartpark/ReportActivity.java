@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,26 +76,12 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
         session = this.getSharedPreferences("Session", Context.MODE_PRIVATE);
         sessionEditor = session.edit();
 
-        /*
-            if (parkingLotJSON.isEmpty()) {
-                parkingLots = new ArrayList<>(); // Return an empty list if no favorites are saved yet
-            } else {
-                Gson gson = new Gson();
-                ParkingLot[] tempArray = gson.fromJson(parkingLotJSON, ParkingLot[].class);
-                if (tempArray != null) {
-                    parkingLots = new ArrayList<>(Arrays.asList(tempArray));
-                } else {
-                    parkingLots = new ArrayList<>();
-                }
-            }
-        */
-
         parkingLots = new ArrayList<>();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapReport);
         mapFragment.getMapAsync(this);
 
-        getUserLocationAndFetchParkingLots();
+        fetchParkingLots();
 
 
         /*  Progress Bar implementation Logic  */
@@ -152,24 +139,23 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
                 String username = session.getString("username", "");
 
                 RequestQueue queue = Volley.newRequestQueue(this);
-                ParkingLotHelper parkingLotHelper = new ParkingLotHelper(this, queue);
 
                 RatingHelper ratingHelper = new RatingHelper(this, queue);
                 ratingHelper.addNewRating(username, choseP, tempAvailable, tempClean,
-                        tempSafe, new RatingHelper.AdditionCallbackFunction() {
-                            @Override
-                            public void onComplete(boolean success) {
-                                if (success == true) {
-                                    Log.d("SmartPark", "NEW RATING ADDED!");
-                                    finish();
-                                } else {
-                                    Toast.makeText(getApplicationContext(),
-                                            "ERROR! RATING WAS NOT CREATED.",
-                                            Toast.LENGTH_SHORT);
-                                }
+                        tempSafe, success -> {
+                            if (success == true) {
+                                Log.d("SmartPark", "NEW RATING ADDED!");
+                                finish();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "ERROR! RATING WAS NOT CREATED.",
+                                        Toast.LENGTH_SHORT);
                             }
                         });
 
+            } else {
+                Toast.makeText(getApplicationContext(), "ERROR! RATING WAS NOT CREATED.",
+                        Toast.LENGTH_SHORT);
             }
 
             finish();
@@ -214,10 +200,9 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
         });
     }
 
-    private void getUserLocationAndFetchParkingLots() {
+    private void fetchParkingLots() {
 
         FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
 
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -226,7 +211,6 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_PERMISSION_REQUEST_CODE);
             return;
         }
-
 
 
         locationProviderClient.getLastLocation()
@@ -246,16 +230,23 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
                                 // Update ListView adapter and Google Map markers
                                 updateMapView(result);
                                 System.out.println(result);
-
+                                Log.d("SmartPark", "Parking lot spaces are displayed.");
                             }
                         });
 
                     } else {
                         // Handle the case where location is null
+                        Toast.makeText(getApplicationContext(),
+                                "THERE ARE NO PARKING SPACES TO DISPLAY ON THE MAP.",
+                                Toast.LENGTH_SHORT);
                     }
                 })
                 .addOnFailureListener(this, e -> {
                     // Handle the failure in getting location
+                    Log.d("SmartPark", "Failed to get parking lot spaces.");
+                    Toast.makeText(getApplicationContext(),
+                            "ERROR! PARKING LOT SPACES FAILED TO DISPLAY.",
+                            Toast.LENGTH_SHORT);
                 });
     }
 

@@ -11,7 +11,6 @@ public class ParkingLot
     public double avgCleanliness;
     public double avgSafety;
     public double avgAvailability;
-    // public int ratingCount;
     public ArrayList<Rating> ratings;
 
     public ParkingLot(String ID, String name, float latitude, float longitude,
@@ -23,7 +22,6 @@ public class ParkingLot
         this.avgCleanliness = avgCleanliness;
         this.avgSafety = avgSafety;
         this.avgAvailability = avgAvailability;
-        // this.ratingCount = ratingCount;
         this.ratings = ratings;
     }
 

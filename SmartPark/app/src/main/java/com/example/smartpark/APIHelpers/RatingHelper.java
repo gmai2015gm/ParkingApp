@@ -168,7 +168,7 @@ public class RatingHelper
         queue.add(r);
     }
     public void addNewRating(String userName, ParkingLot parkingLot, int availability,
-                             int cleanliness, int safety, RatingHelper.AdditionCallbackFunction callback)
+                             int cleanliness, int safety, AdditionCallbackFunction callback)
     {
         Log.d(TAG, "Making Request");
 
@@ -176,14 +176,14 @@ public class RatingHelper
         JSONObject request = new JSONObject();
         try {
             request.put("username", userName);
-            request.put("parkingLot", parkingLot);
+            request.put("parkingLot", parkingLot.getID());
             request.put("cleanliness", cleanliness);
             request.put("safety", safety);
             request.put("availability", availability);
             request.put("notes", "");
-            request.put("timestamp", LocalDateTime.now());
         } catch (JSONException e) {
             callback.onComplete(false);
+            Log.d(TAG, "Request didn't go through.");
         }
 
         //Send the request
