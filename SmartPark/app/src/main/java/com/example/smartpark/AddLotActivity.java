@@ -1,6 +1,9 @@
 package com.example.smartpark;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.android.volley.RequestQueue;
@@ -34,6 +38,7 @@ import java.util.ArrayList;
 
 public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    private static final int NOTIFICATION_ID = 2;
     GoogleMap map;
     Marker m;
     LatLng lotLocation;
@@ -47,6 +52,7 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
     int lotArrayCount;
     boolean switchFlag, markerPlaced;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static final String CHANNEL_ID = "SmartPark Notifications";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +157,8 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
         locationProviderClient.getLastLocation()
                 .addOnSuccessListener(this, location -> {
                     if (location != null) {
+                        notifyUserOfLocation();
+
                         double userLat = location.getLatitude();
                         double userLng = location.getLongitude();
 
@@ -242,4 +250,18 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
  */
+        public void notifyUserOfLocation(){
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                    "MyApp Main Notification Channel",NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+
+            //Make the permission
+            Notification notification = new NotificationCompat.Builder(AddLotActivity.this,CHANNEL_ID)
+                    .setSmallIcon(android.R.drawable.btn_star_big_on)
+                    .setContentTitle("SmartPark")
+                    .setContentText("SmartPark is using your current location.")
+                    .build();
+            notificationManager.notify(NOTIFICATION_ID,notification);
+        }
     }

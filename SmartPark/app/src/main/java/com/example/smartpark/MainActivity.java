@@ -1,19 +1,19 @@
 package com.example.smartpark;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.app.Dialog;
+import android.app.NotificationChannel;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -24,12 +24,12 @@ import com.example.smartpark.Utilities.PersistentHttpCookieStore;
 import org.json.JSONException;
 
 import java.net.CookieHandler;
-import java.net.CookiePolicy;
 import java.net.CookieManager;
+import java.net.CookiePolicy;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
+    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 2;
     Button btnSignOut, btnFindParking, btnViewReports;
     ImageView ivAppInfo;
     public static final String TAG = "SmartPark";
@@ -162,4 +162,5 @@ public class MainActivity extends AppCompatActivity {
         );
         queue.add(signOutReq);
     }
+
 }

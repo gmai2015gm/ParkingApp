@@ -2,9 +2,13 @@ package com.example.smartpark;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -39,6 +43,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallback{
+    private static final int NOTIFICATION_ID = 2;
     // UI elements
     ListView lstParkingLots;
     GoogleMap map;
@@ -57,7 +62,7 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
     String[] sortOrderOptions = {"Order", "Low to High", "High to Low"};
     String []sortOrderDistance = {"Order", "Furthest to Closest", "Closest to Furthest"};
 
-
+    private static final String CHANNEL_ID = "SmartPark Notifications";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,6 +227,8 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
                 .addOnSuccessListener(this, location -> {
                     Log.d("Testing", "" + location);
                     if (location != null) {
+                        notifyUserOfLocation();
+
                         double userLat = location.getLatitude();
                         double userLng = location.getLongitude();
 
@@ -294,6 +301,21 @@ public class ParkingLotInfo extends AppCompatActivity implements OnMapReadyCallb
                 });
 
 
+    }
+
+    public void notifyUserOfLocation(){
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                "MyApp Main Notification Channel",NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+
+        //Make the permission
+        Notification notification = new NotificationCompat.Builder(ParkingLotInfo.this,CHANNEL_ID)
+                .setSmallIcon(android.R.drawable.btn_star_big_on)
+                .setContentTitle("SmartPark")
+                .setContentText("SmartPark is using your current location.")
+                .build();
+        notificationManager.notify(NOTIFICATION_ID,notification);
     }
 
 
