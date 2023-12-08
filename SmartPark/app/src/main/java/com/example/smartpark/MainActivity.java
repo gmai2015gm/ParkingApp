@@ -62,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
         CookieHandler.setDefault(cookies);
 
         btnViewReports.setOnClickListener(v -> {
-                                //put report activity here
-//            Intent i = new Intent(this, ReportActivity.class);
-//            startActivity(i);
+            //put report activity here
+            Intent i = new Intent(this, ReportActivity.class);
+            startActivity(i);
 
         });
 
@@ -81,29 +81,31 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             //Send user to the sign in/registration screen
-//                            startActivity(new Intent(this, UserAuthActivity.class));
+                            startActivity(new Intent(this, UserAuthActivity.class));
                             finish();
 
                             Log.i("Sign Out", "Successful sign out");
                         } else {
                             Log.e("Sign Out", "Could not sign out user.");
+                            Toast.makeText(this, "Error signing out. Please try again.", Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
                         Log.e("Sign Out", "Could not read the server response.\n" + e);
+                        Toast.makeText(this, "Error signing out. Please try again.", Toast.LENGTH_SHORT).show();
                     }
                 }
                 , error -> {
-            Log.e("Sign Out", "Could not reach the server.");
-            Toast.makeText(this, "Could not reach the server.", Toast.LENGTH_SHORT).show();
-        }
+                    Log.e("Sign Out", "Could not reach the server.");
+                    Toast.makeText(this, "Could not reach the server.", Toast.LENGTH_SHORT).show();
+                }
         );
         queue.add(signOutReq);
             
         });
 
         btnFindParking.setOnClickListener(v -> {
-//            Intent i = new Intent(this, ParkingLotInfo.class);
-//            startActivity(i);
+            Intent i = new Intent(this, ParkingLotInfo.class);
+            startActivity(i);
 
         });
 
