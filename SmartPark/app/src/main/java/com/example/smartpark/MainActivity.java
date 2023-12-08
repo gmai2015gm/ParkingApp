@@ -63,19 +63,48 @@ public class MainActivity extends AppCompatActivity {
 
         btnViewReports.setOnClickListener(v -> {
                                 //put report activity here
-//            Intent i = new Intent(this, .class);
+//            Intent i = new Intent(this, ReportActivity.class);
 //            startActivity(i);
-//            finish();
+
         });
 
         btnSignOut.setOnClickListener(v -> {
-//            finish();
+                    //Send the sign out request to the server and get response
+        JsonObjectRequest signOutReq = new JsonObjectRequest(Request.Method.POST, url + "/logout", null,
+                response -> {
+                    try {
+                        int successFlag = response.getInt("success");
+                        if (successFlag == 1){
+                            //Clear the session
+                            if (cookies.getCookieStore().getCookies().size() > 0) {
+                                cookies.getCookieStore().removeAll();
+                            }
+
+                            //Send user to the sign in/registration screen
+//                            startActivity(new Intent(this, UserAuthActivity.class));
+                            finish();
+
+                            Log.i("Sign Out", "Successful sign out");
+                        } else {
+                            Log.e("Sign Out", "Could not sign out user.");
+                        }
+                    } catch (JSONException e) {
+                        Log.e("Sign Out", "Could not read the server response.\n" + e);
+                    }
+                }
+                , error -> {
+            Log.e("Sign Out", "Could not reach the server.");
+            Toast.makeText(this, "Could not reach the server.", Toast.LENGTH_SHORT).show();
+        }
+        );
+        queue.add(signOutReq);
+            
         });
 
         btnFindParking.setOnClickListener(v -> {
 //            Intent i = new Intent(this, ParkingLotInfo.class);
 //            startActivity(i);
-//            finish();
+
         });
 
         ivAppInfo.setOnClickListener(v -> {
