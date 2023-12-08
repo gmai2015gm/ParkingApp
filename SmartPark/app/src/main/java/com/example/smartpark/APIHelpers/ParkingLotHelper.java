@@ -46,10 +46,6 @@ public class ParkingLotHelper
     {
         void onComplete(boolean success);
     }
-    public interface DeleteCallbackFunction
-    {
-        void onComplete(boolean success);
-    }
 
     private ParkingLot parseLot(JSONObject json) throws JSONException
     {

@@ -82,6 +82,7 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
         mapFragment.getMapAsync(this);
 
         fetchParkingLots();
+        choseP = null;
 
 
         /*  Progress Bar implementation Logic  */
@@ -147,18 +148,16 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
                                 Log.d("SmartPark", "NEW RATING ADDED!");
                                 finish();
                             } else {
-                                Toast.makeText(getApplicationContext(),
-                                        "ERROR! RATING WAS NOT CREATED.",
-                                        Toast.LENGTH_SHORT);
+                                Toast.makeText(this,
+                                        "ERROR! Rating was not created.",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         });
 
             } else {
-                Toast.makeText(getApplicationContext(), "ERROR! RATING WAS NOT CREATED.",
-                        Toast.LENGTH_SHORT);
+                Toast.makeText(this, "ERROR! Rating was not created.",
+                        Toast.LENGTH_LONG).show();
             }
-
-            finish();
         });
 
         btnCancel.setOnClickListener(v -> {
@@ -204,7 +203,6 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
 
         FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Check for permissions again, just in case
@@ -235,18 +233,29 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
                         });
 
                     } else {
-                        // Handle the case where location is null
-                        Toast.makeText(getApplicationContext(),
-                                "THERE ARE NO PARKING SPACES TO DISPLAY ON THE MAP.",
-                                Toast.LENGTH_SHORT);
+                        // Create an instance of ParkingLotHelper
+                        RequestQueue queue = Volley.newRequestQueue(this);
+                        ParkingLotHelper parkingLotHelper = new ParkingLotHelper(this, queue);
+
+                        // Call getAllLots
+                        parkingLotHelper.getAllLots(new ParkingLotHelper.ArrayCallbackFunction() {
+                            @Override
+                            public void onSuccess(ArrayList<ParkingLot> result) {
+                                // Update ListView adapter and Google Map markers
+                                updateMapView(result);
+                                System.out.println(result);
+                                Log.d("SmartPark", "Parking lot spaces are displayed.");
+                            }
+                        });
+
                     }
                 })
                 .addOnFailureListener(this, e -> {
                     // Handle the failure in getting location
                     Log.d("SmartPark", "Failed to get parking lot spaces.");
-                    Toast.makeText(getApplicationContext(),
+                    Toast.makeText(this,
                             "ERROR! PARKING LOT SPACES FAILED TO DISPLAY.",
-                            Toast.LENGTH_SHORT);
+                            Toast.LENGTH_LONG).show();
                 });
     }
 
@@ -265,6 +274,7 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
+                Log.d("SmartPark", "A marker was clicked on.");
                 Object tag = marker.getTag();
                 if(tag instanceof ParkingLot){
                     choseP = (ParkingLot) marker.getTag();
@@ -272,6 +282,14 @@ public class ReportActivity extends AppCompatActivity implements OnMapReadyCallb
                 }
 
                 return false;
+            }
+        });
+
+        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(@NonNull LatLng latLng) {
+                Log.d("SmartPark", "Map was clicked on.");
+                choseP = null;
             }
         });
 

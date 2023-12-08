@@ -53,7 +53,7 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
     SharedPreferences.Editor editor;
     ArrayList<ParkingLot> parkingLots;
     int lotArrayCount;
-    boolean switchFlag;
+    boolean switchFlag, markerPlaced;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     @Override
@@ -70,9 +70,10 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
         switchMethod = findViewById(R.id.switchMethod);
         txtInstructions = findViewById(R.id.txtInstructions);
         btnPlaceMarker = findViewById(R.id.btnPlaceMarker);
+        markerPlaced = false;
 
-        lotPref = getSharedPreferences("SmartPark", Context.MODE_PRIVATE);
-        String parkingLotJSON = lotPref.getString("parkingLots", "");
+        // lotPref = getSharedPreferences("SmartPark", Context.MODE_PRIVATE);
+        // String parkingLotJSON = lotPref.getString("parkingLots", "");
 
         parkingLots = new ArrayList<>();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -107,31 +108,40 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
         });
 
         btnSaveLot.setOnClickListener(v -> {
-            String[] coordinates = lblLotLat.getText().toString().split(", ");
-            float tempLat = Float.parseFloat(coordinates[0]);
-            float tempLong = Float.parseFloat(coordinates[1]);
-            String id = lotArrayCount + "";
-            Log.d("SmartPark", "Latitude: " + tempLat + ", Longitude: " + tempLong);
 
-            // Create an instance of ParkingLotHelper
-            RequestQueue queue = Volley.newRequestQueue(this);
-            ParkingLotHelper parkingLotHelper = new ParkingLotHelper(this, queue);
+            if(markerPlaced == true){
+                String[] coordinates = lblLotLat.getText().toString().split(", ");
+                float tempLat = Float.parseFloat(coordinates[0]);
+                float tempLong = Float.parseFloat(coordinates[1]);
+                String id = lotArrayCount + "";
+                Log.d("SmartPark", "Latitude: " + tempLat + ", Longitude: " + tempLong);
 
-            // Call addNewLot
-            parkingLotHelper.addNewLot(editNameInput.getText().toString(),
-                    tempLat, tempLong, new ParkingLotHelper.AdditionCallbackFunction() {
-                        @Override
-                        public void onComplete(boolean success) {
-                            if (success == true) {
-                                Log.d("SmartPark", "NEW PARKING LOT ADDED!");
-                                finish();
-                            } else {
-                                Toast.makeText(getApplicationContext(),
-                                        "ERROR! Parking lot was not created.",
-                                        Toast.LENGTH_SHORT);
+                // Create an instance of ParkingLotHelper
+                RequestQueue queue = Volley.newRequestQueue(this);
+                ParkingLotHelper parkingLotHelper = new ParkingLotHelper(this, queue);
+
+                // Call addNewLot
+                parkingLotHelper.addNewLot(editNameInput.getText().toString(),
+                        tempLat, tempLong, new ParkingLotHelper.AdditionCallbackFunction() {
+                            @Override
+                            public void onComplete(boolean success) {
+                                if (success == true) {
+                                    Log.d("SmartPark", "NEW PARKING LOT ADDED!");
+                                    finish();
+                                } else {
+                                    Toast.makeText(getApplicationContext(),
+                                            "ERROR! Parking lot was not created.",
+                                            Toast.LENGTH_LONG).show();
+                                }
                             }
-                        }
-            });
+                        });
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "ERROR! Please place a marker on the map to indicate the parking" +
+                                "lot's location.",
+                        Toast.LENGTH_LONG).show();
+            }
+
         });
     }
 
@@ -139,15 +149,12 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
 
         FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Check for permissions again, just in case
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_PERMISSION_REQUEST_CODE);
             return;
         }
-
-
 
         locationProviderClient.getLastLocation()
                 .addOnSuccessListener(this, location -> {
@@ -166,14 +173,21 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
 
                                 LatLng latLng = new LatLng(userLat, userLng);
                                 map.addMarker(new MarkerOptions().position(latLng));
+                                markerPlaced = true;
                             }
                         });
                     } else {
                         // Handle the case where location is null
+                        Toast.makeText(getApplicationContext(),
+                                "ERROR! Location was not retrieved.",
+                                Toast.LENGTH_SHORT);
                     }
                 })
                 .addOnFailureListener(this, e -> {
                     // Handle the failure in getting location
+                    Toast.makeText(getApplicationContext(),
+                            "ERROR! Location was not retrieved.",
+                            Toast.LENGTH_SHORT);
                 });
     }
 
@@ -199,6 +213,7 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
                     map.clear();
                     lblLotLat.setText("" + latLng.latitude + ", " + latLng.longitude);
                     m = map.addMarker(new MarkerOptions().position(latLng));
+                    markerPlaced = true;
                 }
             }
         });
