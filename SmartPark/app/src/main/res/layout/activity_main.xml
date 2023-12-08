@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
-        android:text="Find Parking Lots"
+        android:text="View Parking Lots"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="View Parking Lot Reports"
+        android:text="Rate a Parking Lot"
         app:layout_constraintEnd_toEndOf="@+id/btnFindParking"
         app:layout_constraintStart_toStartOf="@+id/btnFindParking"
         app:layout_constraintTop_toBottomOf="@+id/btnFindParking" />

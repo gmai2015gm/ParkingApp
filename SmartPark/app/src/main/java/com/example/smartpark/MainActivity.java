@@ -2,6 +2,7 @@ package com.example.smartpark;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -28,6 +29,7 @@ import java.net.CookieManager;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
     Button btnSignOut, btnFindParking, btnViewReports;
     ImageView ivAppInfo;
     public static final String TAG = "SmartPark";
@@ -51,6 +53,13 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "Location access permitted...");
         }
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            //Permission.not granted, request it
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_REQUEST_CODE);
+            Log.d("Checking Notification Permissions","NOTIFY Permissions denied, asking...");
+        }
+
 
         //Set up Volley
         queue = Volley.newRequestQueue(this);
