@@ -15,22 +15,33 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.smartpark.Utilities.PersistentHttpCookieStore;
 
 import org.json.JSONException;
 
+import java.net.CookieHandler;
+import java.net.CookiePolicy;
+import java.net.CookieManager;
+
 public class MainActivity extends AppCompatActivity {
 
-    Button btnSettings, btnFindParking, btnViewReports;
+    Button btnSignOut, btnFindParking, btnViewReports;
     ImageView ivAppInfo;
     public static final String TAG = "SmartPark";
     public static final int LOCATION_REQUEST_CODE = 115;
+    RequestQueue queue;
+    String url;
+    public java.net.CookieManager cookies;
+    PersistentHttpCookieStore cookieStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btnSettings = findViewById(R.id.btnSettings);
+        btnSignOut = findViewById(R.id.btnSignOut);
         btnFindParking = findViewById(R.id.btnFindParking);
         btnViewReports = findViewById(R.id.btnViewReports);
         ivAppInfo = findViewById(R.id.ivAppInfo);
@@ -41,6 +52,14 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Location access permitted...");
         }
 
+        //Set up Volley
+        queue = Volley.newRequestQueue(this);
+        url = "https://smartpark-api.onrender.com";
+
+        //Set up cookies
+        cookieStore = new PersistentHttpCookieStore(getApplicationContext());
+        cookies = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL);
+        CookieHandler.setDefault(cookies);
 
         btnViewReports.setOnClickListener(v -> {
                                 //put report activity here
@@ -49,42 +68,7 @@ public class MainActivity extends AppCompatActivity {
 //            finish();
         });
 
-        btnSettings.setOnClickListener(v -> {
-//            Log.i("Settings", "Signing Out");
-//            //Insert sign out logic here
-//            //Send the sign in request to the server and get response
-//            JsonObjectRequest signOutReq = new JsonObjectRequest(Request.Method.POST, url + "/logout", null,
-//                    response -> {
-//                        try {
-//                            int successFlag = response.getInt("success");
-//                            if (successFlag == 1){
-//                                //Sign user out
-//                                if (cookies.getCookieStore().getCookies().size() > 0) {
-//                                    cookies.getCookieStore().removeAll();
-//                                }
-                                //Send user to the sign in/registration screen
-                    //            i = new Intent(this, UserAuthActivity.class);
-                    //            startActivity(i);
-
-//                                Log.i("Sign Out", "Successful sign out");
-//                            } else {
-//                                Log.e("Sign Out", "Could not sign out user.");
-//                            }
-//                        } catch (JSONException e) {
-//                            Log.e("Sign Out", "Could not read the server response.\n" + e);
-//                        }
-//                    }
-//                    , error -> {
-//                Log.e("Sign Out", "Could not reach the server.");
-//                Toast.makeText(this, "Could not reach the server.", Toast.LENGTH_SHORT).show();
-//            }
-//            );
-//            queue.add(signOutReq);
-
-
-
-//            Intent i = new Intent(this, Settings.class);
-//            startActivity(i);
+        btnSignOut.setOnClickListener(v -> {
 //            finish();
         });
 
@@ -105,5 +89,37 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
 
         });
+    }
+        protected void onDestroy() {
+        super.onDestroy();
+        //Send the sign out request to the server and get response
+        JsonObjectRequest signOutReq = new JsonObjectRequest(Request.Method.POST, url + "/logout", null,
+                response -> {
+                    try {
+                        int successFlag = response.getInt("success");
+                        if (successFlag == 1){
+                            //Clear the session
+                            if (cookies.getCookieStore().getCookies().size() > 0) {
+                                cookies.getCookieStore().removeAll();
+                            }
+
+                            //Send user to the sign in/registration screen
+//                            startActivity(new Intent(this, UserAuthActivity.class));
+                            finish();
+
+                            Log.i("Sign Out", "Successful sign out");
+                        } else {
+                            Log.e("Sign Out", "Could not sign out user.");
+                        }
+                    } catch (JSONException e) {
+                        Log.e("Sign Out", "Could not read the server response.\n" + e);
+                    }
+                }
+                , error -> {
+            Log.e("Sign Out", "Could not reach the server.");
+            Toast.makeText(this, "Could not reach the server.", Toast.LENGTH_SHORT).show();
+        }
+        );
+        queue.add(signOutReq);
     }
 }
