@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -17,24 +18,28 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.smartpark.Utilities.PersistentHttpCookieStore;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class UserAuthActivity extends AppCompatActivity {
     Button btnSignIn, btnRegister, btnAuth, btnSwitch;
     EditText etUsername, etEmail, etPass, etPassConf;
+    TextView txtAction;
     boolean firstTimeUser, authingFlag;
     RequestQueue queue;
     String url;
     SharedPreferences session;
     SharedPreferences.Editor sessionEditor;
     public CookieManager cookies;
+    PersistentHttpCookieStore cookieStore;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,19 +54,18 @@ public class UserAuthActivity extends AppCompatActivity {
         session = this.getSharedPreferences("Session", Context.MODE_PRIVATE);
         sessionEditor = session.edit();
 
-        //Get any existing cookies
-        cookies = (CookieManager) CookieHandler.getDefault();
+        //Set up cookies
+        cookieStore = new PersistentHttpCookieStore(getApplicationContext());
+        cookies = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL);
+        CookieHandler.setDefault(cookies);
 
         //If the user is already signed in, go to landing screen
         if (cookies != null && cookies.getCookieStore().getCookies().size() > 0) {
+            Log.i("Authorization", "Existing session, skipping sign in");
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
             finish();
         }
-
-        //Set up cookies
-        cookies = new CookieManager();
-        CookieHandler.setDefault(cookies);
 
         //Nothing is authorizing at start
         authingFlag = false;
@@ -75,6 +79,7 @@ public class UserAuthActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPass = findViewById(R.id.etPass);
         etPassConf = findViewById(R.id.etPassConf);
+        txtAction = findViewById(R.id.txtAction);
     }
 
     //Set up the sign in screen
@@ -83,13 +88,17 @@ public class UserAuthActivity extends AppCompatActivity {
         firstTimeUser = false;
 
         //Show the correct views
+        etEmail.setText("");
         etEmail.setHint("Username/Email");
         etEmail.setVisibility(View.VISIBLE);
+        etPass.setText("");
         etPass.setVisibility(View.VISIBLE);
         btnSwitch.setText("Register");
         btnSwitch.setVisibility(View.VISIBLE);
         btnAuth.setText("Sign In");
         btnAuth.setVisibility(View.VISIBLE);
+        txtAction.setText("Sign In");
+        txtAction.setVisibility(View.VISIBLE);
 
         //Hide unused views
         etUsername.setVisibility(View.INVISIBLE);
@@ -106,15 +115,21 @@ public class UserAuthActivity extends AppCompatActivity {
         firstTimeUser = true;
 
         //Show the correct views
+        etUsername.setText("");
         etUsername.setVisibility(View.VISIBLE);
         etEmail.setHint("Email");
+        etEmail.setText("");
         etEmail.setVisibility(View.VISIBLE);
+        etPass.setText("");
         etPass.setVisibility(View.VISIBLE);
+        etPassConf.setText("");
         etPassConf.setVisibility(View.VISIBLE);
         btnSwitch.setText("Sign In");
         btnSwitch.setVisibility(View.VISIBLE);
         btnAuth.setText("Register");
         btnAuth.setVisibility(View.VISIBLE);
+        txtAction.setText("Register");
+        txtAction.setVisibility(View.VISIBLE);
 
         //Hide the starting buttons
         btnSignIn.setVisibility(View.INVISIBLE);
@@ -163,10 +178,9 @@ public class UserAuthActivity extends AppCompatActivity {
                         int successFlag = response.getInt("success");
                         if (successFlag == 1){
                             //Save session to sharedprefs
-                            sessionEditor.putString("SessionKey", response.getString("sessionID"));
                             sessionEditor.putString("username", response.getString("username"));
                             sessionEditor.commit();
-                            System.out.println(response.getString("username"));
+                            Log.d("Username", response.getString("username"));
 
                             //Send user to landing screen
                             Log.i("Sign In", "Successful sign in");
@@ -183,7 +197,7 @@ public class UserAuthActivity extends AppCompatActivity {
                     authingFlag = false;
                 }
                 , error -> {
-                    Log.e("Sign In", "Could not sign in user.");
+                    Log.e("Sign In", "Could not reach server.");
                     Toast.makeText(this, "Could not reach the server.", Toast.LENGTH_SHORT).show();
                     authingFlag = false;
                 }
