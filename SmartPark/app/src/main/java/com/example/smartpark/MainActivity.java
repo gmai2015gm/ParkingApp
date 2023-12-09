@@ -48,12 +48,14 @@ public class MainActivity extends AppCompatActivity {
         btnViewReports = findViewById(R.id.btnViewReports);
         ivAppInfo = findViewById(R.id.ivAppInfo);
 
+        //permission check for accessing location
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         } else {
             Log.d(TAG, "Location access permitted...");
         }
 
+        //permission check for notifications
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             //Permission.not granted, request it
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_REQUEST_CODE);
@@ -130,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
     }
+        //for signing out when app is closed
         protected void onDestroy() {
         super.onDestroy();
         //Send the sign out request to the server and get response
