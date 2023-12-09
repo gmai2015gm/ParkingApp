@@ -93,8 +93,8 @@ public class AddLotActivity extends AppCompatActivity implements OnMapReadyCallb
             } else {
                 //  When the switch is off, switch to method 1 (create lot
                 //  by manually placing a marker on the map)
-                txtInstructions.setText("Method 1: Place a marker on the map to indicate the " +
-                        "location for the new parking lot.");
+                txtInstructions.setText("Method 1: Hold down on a spot on the map to place " +
+                        "a marker, which will indicate the location for the new parking lot.");
                 btnPlaceMarker.setVisibility(View.INVISIBLE);
                 switchMethod.setText("Method 1");
                 switchFlag = false;
